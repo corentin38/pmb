@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+  <meta-desc>Ceci est ma page de développeur. Enfin ce qu'il en reste ...</meta-desc>
+  <meta-author>C'est moi !!</meta-author>
+  <meta-icon>images/favicon.ico</meta-icon>
+
+  <meta-title>Le super site de JCoco</meta-title>
+  <meta-conf-bootstrap>dist/css/bootstrap.min.css</meta-conf-bootstrap>
+  <meta-conf-css>blog.css</meta-conf-css>
+
+  <nav-home href="../index.php">Accueil</nav-home>
+
+  <nav-items>
+    <item href="../TP/JAVA/servlet.html">À propos</item>
+  </nav-items>
+
+  <title>Le site de ouf de JCoco</title>
+  <subtitle>Un petit peu de neuf dans mon chapeau rempli de projets abandonnés</subtitle>
+  
+  <about line="À propos rapide">
+    Je m'appelle Corentin et je suis un <em>divergent</em>. Je fais ce site parce que.
+  </about>
+
+  <links line="Les autres endroits">
+    <item href="http://shaarli.marciau.fr/">Mon shaarly</item>
+    <item href="http://shaarli.flibidi.org/">Le shaarly d'Aurélien</item>
+    <item href="http://shaarli.tatapouftataput.net/">Le shaarly de Fred</item>
+  </links>
+
+  <footer>
+    <philosophy>Ce blog n'est pas un blog sur le cyclimsme. Bootstrap, c'est cool : <a href="http://getbootstrap.com">Boot me !</a></philosophy>
+    <backtotop>Back to top (on sait jamais)</backtotop>
+  </footer>
+</config>

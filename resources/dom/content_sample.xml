@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<posts prev="#" next="index2.html">
+  
+  <post date="2015-04-12T13:18:37" author="Moi">
+    <title>Premier post en C !</title>
+    <mylife>Ceci n'est plus le deuxi&#xE8;me blablablbabla post rajout&#xE9; au contenu en C ...</mylife>
+  </post>
+
+</posts>
