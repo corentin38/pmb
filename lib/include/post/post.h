@@ -27,6 +27,9 @@
 #ifndef _POST_H_
 #define _POST_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif 
 
 extern const char * XSL_TIMESTAMP_FORMAT;
 
@@ -67,14 +70,14 @@ const char * getXslFormatTime();
 /** 
  * Returns a NodeList of post elements with most recent first
  */
-NodeList getPostsOrderByDate(xmlDocPtr doc);
+NodeList* getPostsOrderByDate(xmlDocPtr doc);
 
 /** 
  * Sorts the given NodeList by date, most recent first
  *
  * @param NodeList the posts
  */
-NodeList sortPostsByDate(NodeList posts);
+NodeList* sortPostsByDate(NodeList *posts);
 
 /** 
  * Returns the time difference in second betweend the "date" attributes of two posts.
@@ -90,27 +93,31 @@ int compare(xmlNodePtr post1, xmlNodePtr post2);
  *
  * @param xmlDocPtr the initial content document
  */
-DocList splitPostsByPage(NodeList postNodes, int postsPerPage);
+DocList *splitPostsByPage(NodeList *postNodes, int postsPerPage);
 
 /** 
  * Returns a NodeList with all the nodes found in the @param doc for the given @param xpath.
  * If @param unlink == 1 then, the nodes of the NodeList have been xmlUnlinkNode-ed.
  */
-NodeList getXpathNodes(xmlDocPtr doc, char* xpath, int unlink);
+NodeList *getXpathNodes(xmlDocPtr doc, char* xpath, int unlink);
 
 /** 
  * Free the NodeList structure
  */
-void freeNodeList(NodeList nodeList);
+void freeNodeList(NodeList *nodeList);
 
 /** 
  * Free the DocList structure
  */
-void freeDocList(DocList docList);
+void freeDocList(DocList *docList);
 
 /** 
  * Set prev and next page links
  */
-void setPagerAttributes(DocList pages, char* pageName);
+void setPagerAttributes(DocList *pages, const char* pageName);
+
+#ifdef __cplusplus
+}
+#endif 
 
 #endif

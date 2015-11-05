@@ -36,7 +36,7 @@
 const char * XSL_TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%S";
 
 xmlNodePtr createPostNode(const char* author, const char* title, const char* life) {
-   xmlNodePtr newPost, newTitle, newMyLife;
+   xmlNodePtr newPost;
 
    // On récupère la date courante
    const char *date = getXslFormatTime();
@@ -51,14 +51,14 @@ xmlNodePtr createPostNode(const char* author, const char* title, const char* lif
    }
 
    // Caler l'attribut date
-   if (xmlSetProp(newPost, "date", BAD_CAST date) == NULL) {
+   if (xmlSetProp(newPost, BAD_CAST "date", BAD_CAST date) == NULL) {
       xmlFreeNode(newPost);
       free((char*) date);
       return NULL;
    }
 
    // Caler l'attribut auteur
-   if (xmlSetProp(newPost, "author", BAD_CAST author) == NULL) {
+   if (xmlSetProp(newPost, BAD_CAST "author", BAD_CAST author) == NULL) {
       xmlFreeNode(newPost);
       free((char*) date);
       return NULL;
@@ -114,11 +114,11 @@ const char * getXslFormatTime() {
    return fancy_time;
 }
 
-NodeList getPostsOrderByDate(xmlDocPtr doc) {
+NodeList* getPostsOrderByDate(xmlDocPtr doc) {
    char *xpathPosts = "/posts/post";
-   NodeList postNodes = getXpathNodes(doc, xpathPosts, 1);
+   NodeList *postNodes = getXpathNodes(doc, xpathPosts, 1);
    
-   if(postNodes.nodes == NULL) {
+   if(postNodes->nodes == NULL) {
       printf("[ERROR] Impossible to get posts from xpath: %s", xpathPosts);
       return postNodes;
    }
@@ -126,19 +126,19 @@ NodeList getPostsOrderByDate(xmlDocPtr doc) {
    return sortPostsByDate(postNodes);
 }
 
-NodeList sortPostsByDate(NodeList posts) {
-   if(posts.nodes == NULL) return posts;
+NodeList* sortPostsByDate(NodeList *posts) {
+   if(posts->nodes == NULL) return posts;
    
    // Buble sort
-   int swap = 1, index = posts.nodeNr - 1;
+   int swap = 1, index = posts->nodeNr - 1;
    while (index > 0 && swap == 1) {
       swap = 0;
       int j = 0;
       for (j=0; j<index; j++) {
-	 if (compare(posts.nodes[j], posts.nodes[j+1]) < 0) {
-	    xmlNodePtr tmp = posts.nodes[j];
-	    posts.nodes[j] = posts.nodes[j+1];
-	    posts.nodes[j+1] = tmp;
+	 if (compare(posts->nodes[j], posts->nodes[j+1]) < 0) {
+	    xmlNodePtr tmp = posts->nodes[j];
+	    posts->nodes[j] = posts->nodes[j+1];
+	    posts->nodes[j+1] = tmp;
 	    swap = 1;
 	 }
       }
@@ -181,59 +181,61 @@ int compare(xmlNodePtr post1, xmlNodePtr post2) {
    return difftime(mktime(&time1_struct), mktime(&time2_struct));
 }   
 
-DocList splitPostsByPage(NodeList postNodes, int postsPerPage) {
-   DocList blogPages;
-
+DocList* splitPostsByPage(NodeList *postNodes, int postsPerPage) {
+   DocList *blogPages;
+   
    // Le nombre de doc, c'est la division entière du nb total de posts par
    // le nombre de posts par page souhaité + 1 pour mettre ceux qui restent.
-   int docNr = postNodes.nodeNr / postsPerPage + 1;
+   int docNr = postNodes->nodeNr / postsPerPage + 1;
 
    // Si la division tombe pile, pas besoin de prévoir une page pour les restants ...
-   if (postNodes.nodeNr % postsPerPage == 0) {
+   if (postNodes->nodeNr % postsPerPage == 0) {
       docNr--;
    }
    
    // Init docList with docNr
-   blogPages.docs = malloc(docNr * sizeof(xmlDocPtr));
-   blogPages.docNr = docNr;
+   blogPages = malloc(sizeof(DocList));
+   blogPages->docs = malloc(docNr * sizeof(xmlDocPtr));
+   blogPages->docNr = docNr;
    
    int i=0, indexInCurrentPage=0, currentPage=0;
    xmlNodePtr currentRoot;
    
-   for (i=0; i<postNodes.nodeNr; i++) {
+   for (i=0; i<postNodes->nodeNr; i++) {
       // If starting a new page
       if (indexInCurrentPage == 0) {
-	 xmlDocPtr newPage = xmlNewDoc(BAD_CAST "1.0");
-	 currentRoot = xmlNewNode(NULL, BAD_CAST "posts");
-	 xmlDocSetRootElement(newPage, currentRoot);
-	 
-	 blogPages.docs[currentPage] = newPage;
+         xmlDocPtr newPage = xmlNewDoc(BAD_CAST "1.0");
+         currentRoot = xmlNewNode(NULL, BAD_CAST "posts");
+         xmlDocSetRootElement(newPage, currentRoot);
+         
+         blogPages->docs[currentPage] = newPage;
       }
 
-      xmlAddChild(currentRoot, postNodes.nodes[i]);
+      xmlAddChild(currentRoot, postNodes->nodes[i]);
       indexInCurrentPage++;
       
       // If reaching the end of a page
       if (indexInCurrentPage == postsPerPage) {
-	 indexInCurrentPage = 0;
-	 currentPage++;
+         indexInCurrentPage = 0;
+         currentPage++;
       }
    }
 
    return blogPages;
 }
 
-NodeList getXpathNodes(xmlDocPtr doc, char* xpath, int unlink) {
+NodeList* getXpathNodes(xmlDocPtr doc, char* xpath, int unlink) {
    xmlXPathContextPtr ctxt;
    xmlXPathObjectPtr xpathRes;
-   NodeList nodeList;
+   NodeList *nodeList;
+   nodeList = malloc(sizeof(NodeList));
 
    // Retrieve post nodes with xpath
    xmlXPathInit();
    
    if (NULL == (ctxt = xmlXPathNewContext(doc))) {
       printf("[ERROR] Impossible to initialize XPath context\n");
-      nodeList.nodes = NULL;
+      nodeList->nodes = NULL;
       return nodeList;
    }
 
@@ -241,17 +243,17 @@ NodeList getXpathNodes(xmlDocPtr doc, char* xpath, int unlink) {
 
    if (!xpathRes || XPATH_NODESET != xpathRes->type) {
       printf("[ERROR] Bad XPath or no result : %s\n", xpath);
-      nodeList.nodes = NULL;
+      nodeList->nodes = NULL;
       return nodeList;
    }
 
-   nodeList.nodeNr = xpathRes->nodesetval->nodeNr;
-   nodeList.nodes = malloc(nodeList.nodeNr * sizeof(xmlNodePtr));
+   nodeList->nodeNr = xpathRes->nodesetval->nodeNr;
+   nodeList->nodes = malloc(nodeList->nodeNr * sizeof(xmlNodePtr));
    
    int i = 0;
-   for (i=0; i<nodeList.nodeNr; i++) {
+   for (i=0; i<nodeList->nodeNr; i++) {
       xmlNodePtr current = xpathRes->nodesetval->nodeTab[i];
-      nodeList.nodes[i] = current;
+      nodeList->nodes[i] = current;
       if (unlink == 1) {
 	 xmlUnlinkNode(current);
       }
@@ -263,54 +265,66 @@ NodeList getXpathNodes(xmlDocPtr doc, char* xpath, int unlink) {
    return nodeList;
 }
 
-void freeNodeList(NodeList nodeList) {
-   free(nodeList.nodes);
+void freeNodeList(NodeList *nodeList) {
+   int i = 0;
+   if (nodeList && nodeList->nodes) {
+      for (i=0; i<nodeList->nodeNr; i++) {
+         xmlFreeNode(nodeList->nodes[i]);
+      }
+   }
+   free(nodeList->nodes);
 }
 
-void freeDocList(DocList docList) {
-   free(docList.docs);
+void freeDocList(DocList *docList) {
+   int i = 0;
+   if (docList && docList->docs) {
+      for (i=0; i<docList->docNr; i++) {
+         xmlFreeDoc(docList->docs[i]);
+      }
+   }
+   free(docList->docs);
 }
 
-void setPagerAttributes(DocList pages, char* pageName) {
+void setPagerAttributes(DocList *pages, const char* pageName) {
    char* extension = ".html";
    char currentPageName[256];
    
    int i=0;
-   for(i=0; i<pages.docNr; i++) {
-      xmlNodePtr currentRoot = xmlDocGetRootElement(pages.docs[i]);
+   for(i=0; i<pages->docNr; i++) {
+      xmlNodePtr currentRoot = xmlDocGetRootElement(pages->docs[i]);
 
       // First page's previous link points to #
       if (i == 0) {
-	 if (xmlSetProp(currentRoot, "prev", BAD_CAST "#") == NULL) return;
+	 if (xmlSetProp(currentRoot, BAD_CAST "prev", BAD_CAST "#") == NULL) return;
       }
 
       // Last page's next link points to #
-      if (i == pages.docNr - 1) {
-	 if (xmlSetProp(currentRoot, "next", BAD_CAST "#") == NULL) return;
+      if (i == pages->docNr - 1) {
+         if (xmlSetProp(currentRoot, BAD_CAST "next", BAD_CAST "#") == NULL) return;
       }
-
+      
       // Building prev link
       if (i != 0) {
       	 // reset current page name
-	 currentPageName[0] = '\0';
-	 
-	 if (i == 1) {// First page is index.html, not index0.html
-	    snprintf(currentPageName, sizeof currentPageName, "%s%s", pageName, extension);
-	 } else {
-	    snprintf(currentPageName, sizeof currentPageName, "%s%d%s", pageName, i - 1, extension);
-	 }
-	 
-	 if (xmlSetProp(currentRoot, "prev", BAD_CAST currentPageName) == NULL) return;
+         currentPageName[0] = '\0';
+         
+         if (i == 1) {// First page is index.html, not index0.html
+            snprintf(currentPageName, sizeof currentPageName, "%s%s", pageName, extension);
+         } else {
+            snprintf(currentPageName, sizeof currentPageName, "%s%d%s", pageName, i - 1, extension);
+         }
+         
+         if (xmlSetProp(currentRoot, BAD_CAST "prev", BAD_CAST currentPageName) == NULL) return;
       }
       
       // Building next link
-      if (i != pages.docNr - 1) {
+      if (i != pages->docNr - 1) {
       	 // reset current page name
-	 currentPageName[0] = '\0';
-	 
-	 snprintf(currentPageName, sizeof currentPageName, "%s%d%s", pageName, i + 1, extension);
-	 
-	 if (xmlSetProp(currentRoot, "next", BAD_CAST currentPageName) == NULL) return;
+         currentPageName[0] = '\0';
+         
+         snprintf(currentPageName, sizeof currentPageName, "%s%d%s", pageName, i + 1, extension);
+         
+         if (xmlSetProp(currentRoot, BAD_CAST "next", BAD_CAST currentPageName) == NULL) return;
       }
    }
 

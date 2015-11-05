@@ -5,7 +5,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    blog_(basics::Blog("/home/corentin/work/projects/basics/pmb/resources/dom/content_sample.xml"))
 {
     ui->setupUi(this);
 }
@@ -17,9 +18,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked() 
 {
-    std::cout << "Clicked !\n";
-    std::cout << "field 1: " << ui->textEdit->toPlainText().toStdString() << "\n";
-    std::cout << "field 2: " << ui->lineEdit->text().toStdString() << "\n";
-    std::cout << "field 3: " << ui->lineEdit_2->text().toStdString() << "\n";
+    std::cout << "Clicked !" << std::endl;
     
+    std::string title =  ui->lineEdit->text().toStdString();
+    std::string author =  ui->lineEdit_2->text().toStdString();
+    std::string life =  ui->textEdit->toPlainText().toStdString();
+
+    blog_.add_post(title, author, life);
+    blog_.generate("/home/corentin/work/projects/basics/pmb/resources/output/");
 }

@@ -2,6 +2,7 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include "blog/blog.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -21,6 +22,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    basics::Blog blog_;
+    
+
 };
 
 #endif // MAINWINDOW_HPP
