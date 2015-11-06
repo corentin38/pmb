@@ -2,33 +2,39 @@
 <config>
   <meta-desc>Ceci est ma page de développeur. Enfin ce qu'il en reste ...</meta-desc>
   <meta-author>C'est moi !!</meta-author>
-  <meta-icon>images/favicon.ico</meta-icon>
+  <meta-icon>img/favicon.ico</meta-icon>
 
-  <meta-title>Le super site de JCoco</meta-title>
-  <meta-conf-bootstrap>../dom/dist/css/bootstrap.min.css</meta-conf-bootstrap>
-  <meta-conf-css>../dom/blog.css</meta-conf-css>
+  <meta-title>Le super site de Corentin</meta-title>
+  <meta-conf-bootstrap>dist/css/bootstrap.min.css</meta-conf-bootstrap>
+  <meta-conf-css>blog.css</meta-conf-css>
 
   <nav-home href="../index.php">Accueil</nav-home>
 
   <nav-items>
-    <item href="../TP/JAVA/servlet.html">À propos</item>
+    <item href="../index.php?page=liens">À propos</item>
   </nav-items>
 
-  <title>Le site de ouf de JCoco</title>
-  <subtitle>Un petit peu de neuf dans mon chapeau rempli de projets abandonnés</subtitle>
+  <title>Le super site de Corentin</title>
+  <subtitle>Un petit blog maison pour mes petits projets</subtitle>
   
-  <about line="À propos rapide">
-    Je m'appelle Corentin et je suis un <em>divergent</em>. Je fais ce site parce que.
+  <about line="Qu'est-ce à dire que ceci ?">
+    Je m'appelle Corentin et je suis développeur à Grenoble.
+    <br/><br/>
+    À l'avenir, j'aimerais rassembler sur ce blog toutes les infos sur mes projets perso en informatique. 
   </about>
 
   <links line="Les autres endroits">
     <item href="http://shaarli.marciau.fr/">Mon shaarly</item>
-    <item href="http://shaarli.flibidi.org/">Le shaarly d'Aurélien</item>
+    <item href="http://shaarli.flibidi.net/">Le shaarly d'Aurélien</item>
     <item href="http://shaarli.tatapouftataput.net/">Le shaarly de Fred</item>
   </links>
 
   <footer>
-    <philosophy>Ce blog n'est pas un blog sur le cyclimsme. Bootstrap, c'est cool : <a href="http://getbootstrap.com">Boot me !</a></philosophy>
-    <backtotop>Back to top (on sait jamais)</backtotop>
+    <philosophy>
+      Ce blog n'est pas un blog sur le cyclimsme. Bootstrap,
+      c'est cool : <a href="http://getbootstrap.com">Boot me !</a>
+      <br/>Je dédie ce site à Jeanne
+    </philosophy>
+    <backtotop>Back to top</backtotop>
   </footer>
 </config>
