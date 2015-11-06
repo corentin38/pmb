@@ -25,6 +25,7 @@ add_executable(
 include_directories(
     ${Boost_INCLUDE_DIR}
     ${LIBXML2_INCLUDE_DIR}
+    ${LIBXSLT_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}/lib/include
 )
 

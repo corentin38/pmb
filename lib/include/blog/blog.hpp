@@ -27,11 +27,14 @@
 #define _BLOG_HPP_
 
 #include <string>
+
+extern "C" {    
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
 #include <libxml/tree.h>
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
+}
 
 namespace basics {
 

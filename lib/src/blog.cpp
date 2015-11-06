@@ -133,11 +133,14 @@ int basics::Blog::generate(const std::string output_path, const int post_per_pag
     setPagerAttributes(pages, page_base_name.c_str());
 
     // On save comme content0.xml, content1.xml ...
-    for (int i=0; i<pages->docNr; i++) {
+    for (int i=0; i<pages->docNr; i++) {        
         std::stringstream current_page_path;
-        current_page_path << output_path << page_base_name << i << ".html";
-
-//        xmlSaveFormatFile(current_page_path.str().c_str(), pages->docs[i], 1);
+        if (i>0) {
+            current_page_path << output_path << page_base_name << i << ".html";
+        }
+        else {
+            current_page_path << output_path << page_base_name << ".html";
+        }
 
         xmlDocPtr res = xsltApplyStylesheet(xsl_ptr_, pages->docs[i], NULL);
         // Gérer les foirages IO

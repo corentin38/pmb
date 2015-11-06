@@ -18,7 +18,7 @@
 	<title><xsl:value-of select="$conf/meta-title"/></title>
 	
 	<!-- Bootstrap core CSS -->
-	<link href="dist/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="{$conf/meta-conf-bootstrap}" rel="stylesheet" />
 	
 	<!-- Custom styles for this template -->
 	<link href="{$conf/meta-conf-css}" rel="stylesheet" />
