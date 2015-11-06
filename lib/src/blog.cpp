@@ -90,7 +90,7 @@ void basics::Blog::load_root()
     }
 }
 
-void basics::Blog::add_post(std::string author, std::string title, std::string life) 
+void basics::Blog::add_post(std::string title, std::string author, std::string life) 
 {
     xmlNodePtr post;
     
