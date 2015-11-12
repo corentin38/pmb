@@ -23,7 +23,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    basics::Blog blog_;
+    basics::Interface_blog *blog_;
     
 
 };

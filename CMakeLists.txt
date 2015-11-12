@@ -6,18 +6,19 @@ set( CMAKE_INCLUDE_CURRENT_DIR ON )
 set( CMAKE_AUTOMOC ON )
 set( CMAKE_BUILD_TYPE Debug )
 
-add_definitions( -Wall -Wextra )
+add_definitions( -Wall -Wextra -Werror -Weffc++ -std=c++11 )
 
 find_package( Qt5 REQUIRED Widgets )
 
-qt5_wrap_ui( QT_UI_FILES resources/interface/mainwindow.ui )
+qt5_wrap_ui( QT_UI_FILES interface/mainwindow.ui )
 
+add_subdirectory( libc )
 add_subdirectory( lib )
 
 add_executable(
     ${PROJECT_NAME} 
-    MainWindow/main.cpp
-    MainWindow/mainwindow.cpp
+    main.cpp
+    interface/mainwindow.cpp
     ${QT_UI_FILES}
     ${QT_RCC_FILES}
 )

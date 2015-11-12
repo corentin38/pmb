@@ -20,48 +20,78 @@
  */
 
 /**
- * @file blog.hpp
+ * @file blog_local.hpp
  */
 
-#ifndef _BLOG_HPP_
-#define _BLOG_HPP_
+#ifndef BLOG_LOCAL_HPP
+#define BLOG_LOCAL_HPP
 
 #include <string>
 
 extern "C" {    
-#include <libxml/parser.h>
-#include <libxml/xpath.h>
-#include <libxml/tree.h>
-#include <libxslt/transform.h>
-#include <libxslt/xsltutils.h>
+#include "post/post.h"
 }
 
 namespace basics {
 
-class Blog {
+class Blog_local : Interface_blog {
    
 public:
-    Blog(std::string content_path);
-    ~Blog();
+    Blog_local(std::string content_path);
+    ~Blog_local();
 
     void add_post(std::string, std::string, std::string);
-    void load_xsl(std::string);
     int generate(const std::string output_path, const int post_per_page = 10, const std::string page_base_name = "index");
+
+    inline void set_content_file(path content_file) 
+    {
+        content_file_ = content_file;
+    }
+
+    inline void set_xsl_file(path xsl_file) 
+    {
+        xsl_file_ = xsl_file;
+    }
+
+    inline void set_blog_instance_folder(path blog_instance_folder) 
+    {
+        blog_instance_folder_ = blog_instance_folder;
+    }
+
+    inline void set_archive_folder(path archive_folder) 
+    {
+        archive_folder_ = archive_folder;
+    }
+
+    inline void set_engine_folder(path engine_folder) 
+    {
+        engine_folder_ = engine_folder;
+    }
+
+
     
 private:
+    // Wrapper C structures for all libxml2 stuff
+    BlogContent content_ptr_;
+    BlogRoot root_ptr_;
+    BlogXsl xsl_ptr_;
+
     std::string content_path_;
-
-    xmlDocPtr doc_ptr_;
-    bool content_loaded_;
-
-    xmlNodePtr rootnode_ptr_;
-    bool root_loaded_;
-
-    xsltStylesheetPtr xsl_ptr_;
-    bool xsl_loaded_;
     
+    bool content_loaded_;
+    bool root_loaded_;
+    bool xsl_loaded_;
+
+    path content_file_;
+    path xsl_file_;
+
+    path blog_instance_folder_;
+    path archive_folder_;
+    path engine_folder_;
+
     void load_content(std::string);
     void load_root();
+    void load_xsl(std::string);
     
     
 

@@ -96,6 +96,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionNouveau"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionHurt_me">
@@ -116,6 +117,14 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionNouveau">
+   <property name="text">
+    <string>nouveau</string>
+   </property>
+   <property name="toolTip">
+    <string>Créer une nouvelle instance de blog</string>
    </property>
   </action>
  </widget>

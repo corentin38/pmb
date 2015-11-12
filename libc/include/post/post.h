@@ -24,14 +24,26 @@
  * 
  */
 
-#ifndef _POST_H_
-#define _POST_H_
+#ifndef POST_H
+#define POST_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif 
 
+#include <libxml/parser.h>
+#include <libxml/xpath.h>
+#include <libxml/tree.h>
+#include <libxslt/transform.h>
+#include <libxslt/xsltutils.h>
+   
 extern const char * XSL_TIMESTAMP_FORMAT;
+   
+typedef xmlDocPtr BlogContent;
+typedef xmlNodePtr BlogRoot;
+typedef xsltStylesheetPtr BlogXsl;
+typedef xmlNodePtr BlogPost;
+typedef xmlDocPtr BlogHtmlPage;
 
 typedef struct docList DocList;
 struct docList {
@@ -115,6 +127,18 @@ void freeDocList(DocList *docList);
  * Set prev and next page links
  */
 void setPagerAttributes(DocList *pages, const char* pageName);
+
+/** 
+ * Wrappers pour les trucs libxml2 utilisé dans Blog_local
+ */
+void freeBlogContent(BlogContent blogContent);
+BlogRoot loadBlogRoot(BlogContent blogContent);
+void freeBlogRoot(BlogRoot blogRoot);
+BlogXsl loadBlogXsl(char *xslPath);
+BlogPost createPost(char *author, char *title, char *life);
+BlogPost addPostToRoot(BlogRoot blogRoot, BlogPost blogPost);
+BlogHtmlPage runXslOnPage(BlogXsl blogXsl, DocList *pages, int pageNr);
+void saveBlogHtmlPage(char *currentPagePath, BlogHtmlPage blogPage, BlogXsl blogXsl);
 
 #ifdef __cplusplus
 }

@@ -27,10 +27,6 @@
 #include <stdio.h>
 #include <time.h>
 
-#include <libxml/parser.h>
-#include <libxml/xpath.h>
-#include <libxml/tree.h>
-
 #include "post/post.h"
 
 const char * XSL_TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%S";
@@ -329,4 +325,45 @@ void setPagerAttributes(DocList *pages, const char* pageName) {
    }
 
    return;
+}
+
+BlogContent loadBlogContent(char *contentPath) {
+   // Keep indentation
+   xmlKeepBlanksDefault(0);
+   
+   // Ouverture du fichier XML
+   return (BlogContent) xmlParseFile(contentPath);
+}
+
+// Wrappers for libxml2 functions that were called in Blog_local
+void freeBlogContent(BlogContent blogContent) {
+   xmlFreeDoc((xmlDocPtr) blogContent);
+}
+
+BlogRoot loadBlogRoot(BlogContent blogContent) {
+   return (BlogRoot) xmlDocGetRootElement((xmlDocPtr) blogContent);
+}
+
+void freeBlogRoot(BlogRoot blogRoot) {
+   xmlFreeNode((xmlNodePtr) blogRoot);
+}
+
+BlogXsl loadBlogXsl(char *xslPath) {
+   return (BlogXsl) xsltParseStylesheetFile(BAD_CAST xslPath);
+}
+
+BlogPost createPost(char *author, char *title, char *life) {
+   return (BlogPost) createPostNode(author, title, life);
+}
+
+BlogPost addPostToRoot(BlogRoot blogRoot, BlogPost blogPost) {
+   return xmlAddChild(blogRoot, blogPost);
+}
+
+BlogHtmlPage runXslOnPage(BlogXsl blogXsl, DocList *pages, int pageNr) {
+   return (BlogHtmlPage) xsltApplyStylesheet((xsltStylesheetPtr) blogXsl, pages->docs[pageNr], NULL);
+}
+
+void saveBlogHtmlPage(char *currentPagePath, BlogHtmlPage blogPage, BlogXsl blogXsl) {
+   xsltSaveResultToFilename(currentPagePath, (xmlDocPtr) blogPage, (xsltStylesheetPtr) blogXsl, 0);
 }
