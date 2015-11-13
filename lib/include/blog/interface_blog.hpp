@@ -33,10 +33,10 @@ namespace basics {
 class Interface_blog {
    
 public:
-    virtual ~Interface_blog() = 0;
+    virtual ~Interface_blog() {};
 
     virtual void add_post(const std::string title, const std::string author, const std::string life) = 0;
-    virtual void generate(const std::string output_path, const int post_per_page = 10, const std::string page_base_name = "index") = 0;
+    virtual void generate(const int post_per_page = 10, const std::string page_base_name = "index") = 0;
     
     virtual bool is_ready() = 0;
     

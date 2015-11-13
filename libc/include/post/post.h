@@ -131,14 +131,15 @@ void setPagerAttributes(DocList *pages, const char* pageName);
 /** 
  * Wrappers pour les trucs libxml2 utilisé dans Blog_local
  */
+BlogContent loadBlogContent(const char *contentPath);
 void freeBlogContent(BlogContent blogContent);
 BlogRoot loadBlogRoot(BlogContent blogContent);
 void freeBlogRoot(BlogRoot blogRoot);
-BlogXsl loadBlogXsl(char *xslPath);
-BlogPost createPost(char *author, char *title, char *life);
+BlogXsl loadBlogXsl(const char *xslPath);
+BlogPost createPost(const char *author, const char *title, const char *life);
 BlogPost addPostToRoot(BlogRoot blogRoot, BlogPost blogPost);
 BlogHtmlPage runXslOnPage(BlogXsl blogXsl, DocList *pages, int pageNr);
-void saveBlogHtmlPage(char *currentPagePath, BlogHtmlPage blogPage, BlogXsl blogXsl);
+void saveBlogHtmlPage(const char *currentPagePath, BlogHtmlPage blogPage, BlogXsl blogXsl);
 
 #ifdef __cplusplus
 }

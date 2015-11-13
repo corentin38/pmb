@@ -2,13 +2,28 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 
 project( pmb )
 
+## MAKE SURE THIS POINTS TO PROPER RESOURCE FILES ################
+set( XSL_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/my.xsl )
+set( CONFIG_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/config.xml )
+set( CONTENT_SAMPLE_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/content_sample.xml )
+set( CONTENT_EMPTY_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/content_empty.xml )
+##################################################################
+
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 set( CMAKE_AUTOMOC ON )
 set( CMAKE_BUILD_TYPE Debug )
 
-add_definitions( -Wall -Wextra -Werror -Weffc++ -std=c++11 )
+configure_file( 
+  ${CMAKE_SOURCE_DIR}/lib/gen/blog_constants.hpp.in 
+  ${CMAKE_SOURCE_DIR}/lib/gen/blog_constants.hpp 
+)
+
+#add_definitions( -Wall -Wextra -Werror -Weffc++ -std=c++11 )
+#add_definitions( -Wall -Wextra -Weffc++ -std=c++11 )
+add_definitions( -Wall -Wextra -std=c++11 )
 
 find_package( Qt5 REQUIRED Widgets )
+find_package( Boost COMPONENTS system filesystem REQUIRED )
 
 qt5_wrap_ui( QT_UI_FILES interface/mainwindow.ui )
 

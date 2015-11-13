@@ -33,17 +33,26 @@ namespace basics {
 
 namespace bfs = boost::filesystem;
 
+const std::string const_archive_subdir = "archive";
+const std::string const_engine_subdir = "engine";
+const std::string const_output_subdir = "output";
+const std::string const_content_filename = "content.xml";
+const std::string const_config_filename = "config.xsl";
+const std::string const_xsl_filename = "my.xsl";
+const std::string const_img_subdir = "img";
+const std::string const_save_sufix = "_content_archive.xml";
+
 class Factory_blog {
 
 public:
     Factory_blog();
 
-    basics::Interface_blog* create_local_instance(
-        std::string blog_folder, 
+    std::unique_ptr<basics::Interface_blog> create_local_instance(
+        std::string blog_path, 
         bool remove_previous_folder = false, 
         bool add_sample_content = true);
 
-    basics::Interface_blog* load_local_instance(bfs::path blog_folder);
+//    basics::Interface_blog* load_local_instance(bfs::path blog_folder);
 
     //Blog_ssh create_distant_instance(ssh_path blog_remote_folder);
     

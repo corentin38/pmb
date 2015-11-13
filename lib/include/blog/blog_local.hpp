@@ -26,6 +26,8 @@
 #ifndef BLOG_LOCAL_HPP
 #define BLOG_LOCAL_HPP
 
+#include "blog/interface_blog.hpp"
+#include <boost/filesystem.hpp>
 #include <string>
 
 extern "C" {    
@@ -34,41 +36,26 @@ extern "C" {
 
 namespace basics {
 
-class Blog_local : Interface_blog {
+namespace bfs = boost::filesystem;
+
+class Blog_local : public Interface_blog {
    
 public:
-    Blog_local(std::string content_path);
+    Blog_local(bfs::path blog_instance_folder, 
+               bfs::path content_file, 
+               bfs::path archive_folder,
+               bfs::path engine_folder,
+               bfs::path output_folder,
+               bfs::path xsl_file);
+    
     ~Blog_local();
 
+    Blog_local(const basics::Blog_local&) = delete;
+    Blog_local& operator=(const basics::Blog_local&) = delete;
+
     void add_post(std::string, std::string, std::string);
-    int generate(const std::string output_path, const int post_per_page = 10, const std::string page_base_name = "index");
-
-    inline void set_content_file(path content_file) 
-    {
-        content_file_ = content_file;
-    }
-
-    inline void set_xsl_file(path xsl_file) 
-    {
-        xsl_file_ = xsl_file;
-    }
-
-    inline void set_blog_instance_folder(path blog_instance_folder) 
-    {
-        blog_instance_folder_ = blog_instance_folder;
-    }
-
-    inline void set_archive_folder(path archive_folder) 
-    {
-        archive_folder_ = archive_folder;
-    }
-
-    inline void set_engine_folder(path engine_folder) 
-    {
-        engine_folder_ = engine_folder;
-    }
-
-
+    void generate(const int post_per_page = 10, const std::string page_base_name = "index");
+    bool is_ready();
     
 private:
     // Wrapper C structures for all libxml2 stuff
@@ -76,22 +63,20 @@ private:
     BlogRoot root_ptr_;
     BlogXsl xsl_ptr_;
 
-    std::string content_path_;
-    
+    bfs::path blog_instance_folder_;
+    bfs::path content_file_;
+    bfs::path archive_folder_;
+    bfs::path engine_folder_;
+    bfs::path output_folder_;
+    bfs::path xsl_file_;
+
     bool content_loaded_;
     bool root_loaded_;
     bool xsl_loaded_;
 
-    path content_file_;
-    path xsl_file_;
-
-    path blog_instance_folder_;
-    path archive_folder_;
-    path engine_folder_;
-
-    void load_content(std::string);
+    void load_content();
     void load_root();
-    void load_xsl(std::string);
+    void load_xsl();
     
     
 

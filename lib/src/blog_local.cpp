@@ -29,11 +29,29 @@
 #include <stdexcept>
 #include <sstream>
 
-basics::Blog_local::Blog_local(const std::string content_path)
-    : Interface_blog(), content_path_(content_path)
+basics::Blog_local::Blog_local(
+    bfs::path blog_instance_folder, 
+    bfs::path content_file, 
+    bfs::path archive_folder,
+    bfs::path engine_folder,
+    bfs::path output_folder,
+    bfs::path xsl_file)
+    : Interface_blog(), 
+      content_ptr_(NULL),
+      root_ptr_(NULL),
+      xsl_ptr_(NULL),
+      blog_instance_folder_(blog_instance_folder), 
+      content_file_(content_file), 
+      archive_folder_(archive_folder),
+      engine_folder_(engine_folder),
+      output_folder_(output_folder),
+      xsl_file_(xsl_file),
+      content_loaded_(false),
+      root_loaded_(false),
+      xsl_loaded_(false)
 {
     try {
-        load_content(content_path_);
+        load_content();
     }
     catch (const std::exception& e) {
         content_loaded_ = false;
@@ -47,21 +65,26 @@ basics::Blog_local::Blog_local(const std::string content_path)
         root_loaded_ = false;
         return;
     }
+
+    try {
+        load_xsl();
+    }
+    catch (const std::exception& e) {
+        xsl_loaded_ = false;
+        return;
+    }
 }
 
-basics::Blog_local::~Blog()
+basics::Blog_local::~Blog_local()
 {
     if (content_loaded_) {
         freeBlogContent(content_ptr_);
     }
-    if (xsl_loaded_) {
-        freeBlogXsl(xsl_ptr_);
-    }
 }
 
-void basics::Blog_local::load_content(std::string content_path)
+void basics::Blog_local::load_content()
 {
-    content_ptr_ = loadBlogContent(content_path_.str().c_str());
+    content_ptr_ = loadBlogContent(content_file_.string().c_str());
     if (content_ptr_ == NULL) {
         content_loaded_ = false;
         std::stringstream err;
@@ -86,6 +109,19 @@ void basics::Blog_local::load_root()
     }
     
     root_loaded_ = true;
+}
+
+void basics::Blog_local::load_xsl() 
+{
+    xsl_ptr_ = loadBlogXsl(xsl_file_.string().c_str());
+    if (xsl_ptr_ == NULL) {
+        xsl_loaded_ = false;
+        std::stringstream err;
+        err << "Feuille de style invalide";
+        throw std::runtime_error(err.str());
+    }
+
+    xsl_loaded_ = true;
 }
 
 void basics::Blog_local::add_post(std::string title, std::string author, std::string life) 
@@ -113,23 +149,10 @@ void basics::Blog_local::add_post(std::string title, std::string author, std::st
     }
 }
 
-void basics::Blog_local::load_xsl(std::string xsl_path) 
-{
-    xsl_ptr_ = loadBlogXsl(xsl_path.str().c_str());
-    if (xsl_ptr_ == NULL) {
-        xsl_loaded_ = false;
-        std::stringstream err;
-        err << "Feuille de style invalide";
-        throw std::runtime_error(err.str());
-    }
-
-    xsl_loaded_ = true;
-}
-
-void basics::Blog_local::generate(const std::string output_path, const int post_per_page, const std::string page_base_name)
+void basics::Blog_local::generate(const int post_per_page, const std::string page_base_name)
 {
     if (!xsl_loaded_) {
-        load_xsl_(xsl_file_);
+        load_xsl();
     }
 
     if (!xsl_loaded_) {
@@ -156,10 +179,10 @@ void basics::Blog_local::generate(const std::string output_path, const int post_
     for (int i=0; i<pages->docNr; i++) {        
         std::stringstream current_page_path;
         if (i>0) {
-            current_page_path << output_path << page_base_name << i << ".html";
+            current_page_path << output_folder_.string() << "/" << page_base_name << i << ".html";
         }
         else {
-            current_page_path << output_path << page_base_name << ".html";
+            current_page_path << output_folder_.string() << "/" << page_base_name << ".html";
         }
 
         BlogHtmlPage res = runXslOnPage(xsl_ptr_, pages, i);
@@ -170,3 +193,7 @@ void basics::Blog_local::generate(const std::string output_path, const int post_
     freeDocList(pages);
 }
 
+bool basics::Blog_local::is_ready() 
+{
+    return true;
+}

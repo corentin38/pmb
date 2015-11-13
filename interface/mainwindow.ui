@@ -99,11 +99,6 @@
    <addaction name="actionNouveau"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionHurt_me">
-   <property name="text">
-    <string>Hurt</string>
-   </property>
-  </action>
   <action name="actionQuit">
    <property name="text">
     <string>Quitter</string>

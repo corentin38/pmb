@@ -25,6 +25,8 @@
 
 #include "blog/factory_blog.hpp"
 #include "blog/interface_blog.hpp"
+#include "blog/blog_local.hpp"
+#include "blog_constants.hpp"
 
 #include <iostream>
 #include <stdexcept>
@@ -34,54 +36,100 @@ basics::Factory_blog::Factory_blog()
 {
 }
 
-basics::Interface_blog* 
+//   std::unique_ptr<basics::Data_prim> data_prim_ptr( new basics::I2osp_os2ip() );
+
+std::unique_ptr<basics::Interface_blog> 
 basics::Factory_blog::create_local_instance(
-    std::string blog_folder, 
+    std::string blog_path, 
     bool remove_previous_folder, 
     bool add_sample_content) 
 {
-    bfs::path blog_path( blog_folder );
+    bfs::path blog_folder( blog_path );
     
-    if (bfs::exists(blog_path)) {
+    if (bfs::exists(blog_folder)) {
         if (remove_previous_folder) {
-            remove_blog_folder(blog_path);
+            remove_blog_folder(blog_folder);
         }
         else {
-            std::stringstream err;
-            err << "Blog folder points to an existing directory";
-            throw std::runtime_error(err.str());
+            throw std::runtime_error("Blog folder points to an existing directory");
         }
     }
 
+    bfs::create_directory(blog_folder);
 
-basics::Interface_blog* blog;
-basics::Interface_blog* blog2;
+    // Fetching all blog instance components
+    bfs::path archive_subdir = blog_folder / const_archive_subdir;
+    bfs::path engine_subdir = blog_folder / const_engine_subdir;
+    bfs::path output_subdir = blog_folder / const_output_subdir;
+    bfs::path img_subdir = output_subdir / const_img_subdir;
+    
+    bfs::create_directory(archive_subdir);
+    bfs::create_directory(engine_subdir);
+    bfs::create_directory(output_subdir);
+    bfs::create_directory(img_subdir);    
 
-if (add_sample_content) {
-return blog2;
+    // Copy xsl and config default file
+    bfs::path xsl_resource( basics::getStylesheetResource() );
+    bfs::path xsl_dest = engine_subdir / "stylesheet.xsl";
+    bfs::copy_file(xsl_resource, xsl_dest);
+    
+    bfs::path config_resource( basics::getConfigResource() );
+    bfs::path config_dest = engine_subdir / "config.xml";
+    bfs::copy_file(config_resource, config_dest);
+    
+    bfs::path content_sample_resource( basics::getContentSampleResource() );
+    bfs::path content_empty_resource( basics::getContentEmptyResource() );
+    bfs::path content_dest = blog_folder / const_content_filename;
+    
+    if (add_sample_content) {
+        bfs::copy_file(content_sample_resource, content_dest);        
+    }
+    else {
+        bfs::copy_file(content_empty_resource, content_dest);        
+    }
+
+    std::unique_ptr<basics::Interface_blog> local_blog_ptr( 
+        new basics::Blog_local(
+            blog_folder,
+            content_dest,
+            archive_subdir,
+            engine_subdir,
+            output_subdir,
+            xsl_dest) 
+        );
+    
+    return std::move(local_blog_ptr);
+
 }
 
-
-return blog;
-
-
-
-}
-
-basics::Interface_blog* 
-basics::Factory_blog::load_local_instance(bfs::path blog_folder)
+/*
+std::unique_ptr<basics::Interface_blog> 
+basics::Factory_blog::load_local_instance(std::string blog_folder_path)
 {
-basics::Interface_blog* blog = ;
-basics::Interface_blog* blog2;
-
-if (bfs::exists(blog_folder)) {
-return blog2;
+    std::unique_ptr<basics::Interface_blog> local_blog_ptr( 
+        new basics::Blog_local(
+            // TODO
+            ) 
+        );
+    
+    return std::move(local_blog_ptr);
 }
 
-
-return blog;
-
+void basics::Factory_blog::create_blog_arbo( bfs::path blog_folder ) 
+{
+    // Fetching all blog instance components
+    bfs::path archive_subdir = blog_folder / const_archive_subdir;
+    bfs::path engine_subdir = blog_folder / const_engine_subdir;
+    bfs::path output_subdir = blog_folder / const_output_subdir;
+    bfs::path img_subdir = output_subdir / const_img_subdir;
+    
+    bfs::create_directory(archive_subdir);
+    bfs::create_directory(engine_subdir);
+    bfs::create_directory(output_subdir);
+    bfs::create_directory(img_subdir);    
 }
+
+*/
 
 void basics::Factory_blog::remove_blog_folder( bfs::path blog_folder ) 
 {

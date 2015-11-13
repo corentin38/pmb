@@ -327,7 +327,8 @@ void setPagerAttributes(DocList *pages, const char* pageName) {
    return;
 }
 
-BlogContent loadBlogContent(char *contentPath) {
+// Wrappers for libxml2 functions that were called in Blog_local
+BlogContent loadBlogContent(const char *contentPath) {
    // Keep indentation
    xmlKeepBlanksDefault(0);
    
@@ -335,7 +336,6 @@ BlogContent loadBlogContent(char *contentPath) {
    return (BlogContent) xmlParseFile(contentPath);
 }
 
-// Wrappers for libxml2 functions that were called in Blog_local
 void freeBlogContent(BlogContent blogContent) {
    xmlFreeDoc((xmlDocPtr) blogContent);
 }
@@ -348,11 +348,11 @@ void freeBlogRoot(BlogRoot blogRoot) {
    xmlFreeNode((xmlNodePtr) blogRoot);
 }
 
-BlogXsl loadBlogXsl(char *xslPath) {
+BlogXsl loadBlogXsl(const char *xslPath) {
    return (BlogXsl) xsltParseStylesheetFile(BAD_CAST xslPath);
 }
 
-BlogPost createPost(char *author, char *title, char *life) {
+BlogPost createPost(const char *author, const char *title, const char *life) {
    return (BlogPost) createPostNode(author, title, life);
 }
 
@@ -364,6 +364,6 @@ BlogHtmlPage runXslOnPage(BlogXsl blogXsl, DocList *pages, int pageNr) {
    return (BlogHtmlPage) xsltApplyStylesheet((xsltStylesheetPtr) blogXsl, pages->docs[pageNr], NULL);
 }
 
-void saveBlogHtmlPage(char *currentPagePath, BlogHtmlPage blogPage, BlogXsl blogXsl) {
+void saveBlogHtmlPage(const char *currentPagePath, BlogHtmlPage blogPage, BlogXsl blogXsl) {
    xsltSaveResultToFilename(currentPagePath, (xmlDocPtr) blogPage, (xsltStylesheetPtr) blogXsl, 0);
 }
