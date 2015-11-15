@@ -111,7 +111,7 @@ DocList *splitPostsByPage(NodeList *postNodes, int postsPerPage);
  * Returns a NodeList with all the nodes found in the @param doc for the given @param xpath.
  * If @param unlink == 1 then, the nodes of the NodeList have been xmlUnlinkNode-ed.
  */
-NodeList *getXpathNodes(xmlDocPtr doc, char* xpath, int unlink);
+NodeList *getXpathNodes(xmlDocPtr doc, char* xpath);
 
 /** 
  * Free the NodeList structure
@@ -140,6 +140,7 @@ BlogPost createPost(const char *author, const char *title, const char *life);
 BlogPost addPostToRoot(BlogRoot blogRoot, BlogPost blogPost);
 BlogHtmlPage runXslOnPage(BlogXsl blogXsl, DocList *pages, int pageNr);
 void saveBlogHtmlPage(const char *currentPagePath, BlogHtmlPage blogPage, BlogXsl blogXsl);
+int saveBlogContent(const char *contentPath, BlogContent blogContent);
 
 #ifdef __cplusplus
 }

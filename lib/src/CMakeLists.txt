@@ -8,5 +8,8 @@ include_directories(
 
 add_definitions( -Werror -Weffc++ -std=c++11 )
 
+add_library( utils boost_utils.cpp )
+target_link_libraries( utils ${Boost_LIBRARIES} )
+
 add_library( blog factory_blog.cpp blog_local.cpp )
-target_link_libraries( blog post ${Boost_LIBRARIES} )
+target_link_libraries( blog post utils ${Boost_LIBRARIES} )

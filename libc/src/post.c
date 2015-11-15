@@ -112,7 +112,7 @@ const char * getXslFormatTime() {
 
 NodeList* getPostsOrderByDate(xmlDocPtr doc) {
    char *xpathPosts = "/posts/post";
-   NodeList *postNodes = getXpathNodes(doc, xpathPosts, 1);
+   NodeList *postNodes = getXpathNodes(doc, xpathPosts);
    
    if(postNodes->nodes == NULL) {
       printf("[ERROR] Impossible to get posts from xpath: %s", xpathPosts);
@@ -220,7 +220,7 @@ DocList* splitPostsByPage(NodeList *postNodes, int postsPerPage) {
    return blogPages;
 }
 
-NodeList* getXpathNodes(xmlDocPtr doc, char* xpath, int unlink) {
+NodeList* getXpathNodes(xmlDocPtr doc, char* xpath) {
    xmlXPathContextPtr ctxt;
    xmlXPathObjectPtr xpathRes;
    NodeList *nodeList;
@@ -248,11 +248,7 @@ NodeList* getXpathNodes(xmlDocPtr doc, char* xpath, int unlink) {
    
    int i = 0;
    for (i=0; i<nodeList->nodeNr; i++) {
-      xmlNodePtr current = xpathRes->nodesetval->nodeTab[i];
-      nodeList->nodes[i] = current;
-      if (unlink == 1) {
-	 xmlUnlinkNode(current);
-      }
+      nodeList->nodes[i] = xmlCopyNode( xpathRes->nodesetval->nodeTab[i], 1 );
    }
 
    xmlXPathFreeObject(xpathRes);
@@ -366,4 +362,8 @@ BlogHtmlPage runXslOnPage(BlogXsl blogXsl, DocList *pages, int pageNr) {
 
 void saveBlogHtmlPage(const char *currentPagePath, BlogHtmlPage blogPage, BlogXsl blogXsl) {
    xsltSaveResultToFilename(currentPagePath, (xmlDocPtr) blogPage, (xsltStylesheetPtr) blogXsl, 0);
+}
+
+int saveBlogContent(const char *contentPath, BlogContent blogContent) {
+   return xmlSaveFormatFile(contentPath, (xmlDocPtr) blogContent, 1);
 }

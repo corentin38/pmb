@@ -27,6 +27,7 @@
 #include "blog/interface_blog.hpp"
 #include "blog/blog_local.hpp"
 #include "blog_constants.hpp"
+#include "utils/boost_utils.hpp"
 
 #include <iostream>
 #include <stdexcept>
@@ -70,12 +71,21 @@ basics::Factory_blog::create_local_instance(
 
     // Copy xsl and config default file
     bfs::path xsl_resource( basics::getStylesheetResource() );
-    bfs::path xsl_dest = engine_subdir / "stylesheet.xsl";
+    bfs::path xsl_dest = engine_subdir / const_xsl_filename;
     bfs::copy_file(xsl_resource, xsl_dest);
     
     bfs::path config_resource( basics::getConfigResource() );
-    bfs::path config_dest = engine_subdir / "config.xml";
+    bfs::path config_dest = engine_subdir / const_config_filename;
     bfs::copy_file(config_resource, config_dest);
+
+    // Copy bootstrap directory and css
+    bfs::path bootstrap_resource( basics::getBootstrapResource() );
+    bfs::path bootstrap_dest = output_subdir / const_bootstrap_subdir;
+    basics::copy_folder(bootstrap_resource, bootstrap_dest);
+    
+    bfs::path css_resource( basics::getCssResource() );
+    bfs::path css_dest = output_subdir / const_css_filename;
+    bfs::copy_file(css_resource, css_dest);
     
     bfs::path content_sample_resource( basics::getContentSampleResource() );
     bfs::path content_empty_resource( basics::getContentEmptyResource() );
@@ -102,19 +112,61 @@ basics::Factory_blog::create_local_instance(
 
 }
 
-/*
 std::unique_ptr<basics::Interface_blog> 
 basics::Factory_blog::load_local_instance(std::string blog_folder_path)
 {
+    bfs::path blog_folder( blog_folder_path );
+    
+    if (!bfs::exists(blog_folder)) {
+        std::stringstream err;
+        err << "Provided blog folder doesn't exist";
+        throw std::runtime_error( err.str() );
+    }
+    
+    if (!bfs::is_directory(blog_folder)) {
+        std::stringstream err;
+        err << "Provided blog folder is not a directory";
+        throw std::runtime_error( err.str() );
+    }
+
+    // Fetching all blog instance components
+    bfs::path archive_subdir = blog_folder / const_archive_subdir;
+    bfs::path engine_subdir = blog_folder / const_engine_subdir;
+    bfs::path output_subdir = blog_folder / const_output_subdir;
+    bfs::path img_subdir = output_subdir / const_img_subdir;
+    
+    if (!bfs::exists(archive_subdir) ||
+        !bfs::exists(engine_subdir) ||
+        !bfs::exists(output_subdir) ||
+        !bfs::exists(img_subdir)) {
+        std::stringstream err;
+        err << "Corrupted blog instance : missing subdirectory";
+        throw std::runtime_error( err.str() );
+    }
+
+    bfs::path content_file = blog_folder / const_content_filename;
+    bfs::path xsl_file = engine_subdir / const_xsl_filename;
+
+    if (!bfs::exists(content_file) ||
+        !bfs::exists(xsl_file)) {
+        std::stringstream err;
+        err << "Corrupted blog instance : missing content.xml or stylesheet.xsl";
+        throw std::runtime_error( err.str() );
+    }    
+
     std::unique_ptr<basics::Interface_blog> local_blog_ptr( 
         new basics::Blog_local(
-            // TODO
-            ) 
+            blog_folder,
+            content_file,
+            archive_subdir,
+            engine_subdir,
+            output_subdir,
+            xsl_file)
         );
     
     return std::move(local_blog_ptr);
 }
-
+/*
 void basics::Factory_blog::create_blog_arbo( bfs::path blog_folder ) 
 {
     // Fetching all blog instance components

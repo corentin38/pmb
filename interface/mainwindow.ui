@@ -96,7 +96,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionNouveau"/>
+   <addaction name="actionNew"/>
+   <addaction name="actionOpen"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionQuit">
@@ -114,12 +115,20 @@
     <string>About</string>
    </property>
   </action>
-  <action name="actionNouveau">
+  <action name="actionNew">
    <property name="text">
     <string>nouveau</string>
    </property>
    <property name="toolTip">
-    <string>Créer une nouvelle instance de blog</string>
+    <string>Créer un nouveau blog</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>ouvrir</string>
+   </property>
+   <property name="toolTip">
+    <string>Ouvrir un blog</string>
    </property>
   </action>
  </widget>

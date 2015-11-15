@@ -147,6 +147,21 @@ void basics::Blog_local::add_post(std::string title, std::string author, std::st
         err << "Impossible d'ajouter le nouveau post à la racine";
         throw std::runtime_error(err.str());
     }
+
+    std::string content_file_path = content_file_.string();
+    if (bfs::exists(content_file_) && bfs::is_regular(content_file_)) {
+        bfs::remove(content_file_);
+    }
+
+    // On écrit le nouveau content.xml
+    if (saveBlogContent(content_file_path.c_str(), content_ptr_) == -1) {
+        std::stringstream err;
+        err << "Impossible de sauvegarder le nouveau contenu du blog (content.xml)";
+        throw std::runtime_error(err.str());
+    }
+    
+//    content_file_(content_file_path);
+
 }
 
 void basics::Blog_local::generate(const int post_per_page, const std::string page_base_name)

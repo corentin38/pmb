@@ -20,13 +20,16 @@ public:
 private slots:
     void on_generateButton_clicked();
     void on_clearButton_clicked();
-    void on_actionNouveau_triggered();
+    void on_actionNew_triggered();
+    void on_actionOpen_triggered();
 
 private:
     Ui::MainWindow *ui;
     std::unique_ptr<basics::Interface_blog> blog_;
-    
 
+    void clear_fields();
+    void warning(std::string);
+    
 };
 
 #endif // MAINWINDOW_HPP

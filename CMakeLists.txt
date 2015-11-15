@@ -7,6 +7,8 @@ set( XSL_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/my.xsl )
 set( CONFIG_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/config.xml )
 set( CONTENT_SAMPLE_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/content_sample.xml )
 set( CONTENT_EMPTY_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/content_empty.xml )
+set( BOOTSTRAP_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/dist )
+set( CSS_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/blog.css )
 ##################################################################
 
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
@@ -25,7 +27,7 @@ add_definitions( -Wall -Wextra -std=c++11 )
 find_package( Qt5 REQUIRED Widgets )
 find_package( Boost COMPONENTS system filesystem REQUIRED )
 
-qt5_wrap_ui( QT_UI_FILES interface/mainwindow.ui )
+qt5_wrap_ui( QT_UI_FILES interface/mainwindow.ui interface/blogwizard.ui )
 
 add_subdirectory( libc )
 add_subdirectory( lib )
@@ -33,6 +35,7 @@ add_subdirectory( lib )
 add_executable(
     ${PROJECT_NAME} 
     main.cpp
+    interface/blogwizard.cpp
     interface/mainwindow.cpp
     ${QT_UI_FILES}
     ${QT_RCC_FILES}

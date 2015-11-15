@@ -3,3 +3,4 @@
 build
 *.kdev4
 doc
+lib/gen/blog_constants.hpp
