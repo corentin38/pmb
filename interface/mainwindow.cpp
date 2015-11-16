@@ -6,6 +6,7 @@
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include "utils/simple_logger.hpp"
+#include <QFileDialog>
 
 namespace bfs = boost::filesystem;
 
@@ -32,7 +33,8 @@ MainWindow::MainWindow(QWidget *parent, int log_level, std::string blog_folder_p
 //    Factory_blog factory;
 //    blog_ = factory.load_local_instance(last_edited_blog);
 //}
-
+    ui->statusBar->showMessage(tr("Aucun blog chargé"), 5 * 1000);
+    ui->blogCB->addItem(tr("(Aucun)"));
 }
 
 MainWindow::~MainWindow()
@@ -42,6 +44,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_generateButton_clicked()
 {
+    if (!blog_) {
+        warning("Aucun blog n'est actuellement chargé.\n"
+                "Vous pouvez créer un blog en cliquant sur "
+                "Nouveau ou en charger un en cliquant sur Ouvrir.");
+        return;
+    }
+
+    ui->statusBar->showMessage(tr("Génération du blog ..."));
     logger_.info("Début de l'ajout d'un nouveau post et de la génération du blog");
     
     std::string title =  ui->titleEdit->text().toStdString();
@@ -57,6 +67,7 @@ void MainWindow::on_generateButton_clicked()
     clear_fields();
 
     logger_.info("Post ajouté et blog généré");
+    ui->statusBar->showMessage(tr("Blog publié !"), 5 * 1000);
 }
 
 void MainWindow::on_clearButton_clicked() 
@@ -96,25 +107,58 @@ void MainWindow::on_actionNew_triggered()
     bfs::path blog_folder = blog_parent_folder / name;
 
     try {
-        basics::Factory_blog fact;
         logger_.info("Début de la création du blog. Dossier : " + blog_folder.string());
         if (override) logger_.info("En supprimant un éventuel dossier existant");
         if (sample) logger_.info("En ajoutant un contenu d'exemple");
+
+        basics::Factory_blog fact;
         blog_ = fact.create_local_instance(blog_folder.string(), override, sample);
     }
     catch (const std::exception& e) {
         warning(std::string("Impossible de créer le blog !\n") + std::string(e.what()));
+        return;
     }
     
+    ui->blogCB->addItem(QString::fromStdString(blog_folder.string()));    
+
     logger_.info("Nouveau blog créé avec succès");
 }
 
 void MainWindow::on_actionOpen_triggered() 
 {
     logger_.info("Chargement d'une instance existante de blog");
-    basics::Factory_blog fact;
-    blog_ = fact.load_local_instance("/home/corentin/blog/testor/");
-    logger_.info("Instance chargée : /home/mes couilles");
+
+    QString q_blog_folder_path = QFileDialog::getExistingDirectory(
+        this,
+        tr("Choisir un blog"),
+        getenv("HOME"));
+
+    std::string blog_folder_path = q_blog_folder_path.toUtf8().constData();
+
+    if (blog_folder_path.empty()) {
+        return;
+    }
+    
+    bfs::path blog_folder(blog_folder_path);
+
+    if (!bfs::exists(blog_folder) || !bfs::is_directory(blog_folder)) {
+        warning("Le dossier sélectionné n'est pas un blog valide");
+        return;
+    }
+
+    try {
+        basics::Factory_blog fact;
+        blog_ = fact.load_local_instance(blog_folder.string());
+    }
+    catch (const std::exception& e) {
+        warning(std::string("Impossible d'ouvrir le blog !\n") + std::string(e.what()));
+        return;
+    }
+
+    ui->blogCB->addItem(QString::fromStdString(blog_folder.string()));
+
+    ui->statusBar->showMessage(tr("Blog chargé !"), 5 * 1000);
+    logger_.info(std::string("Instance chargée : ") + blog_folder.string());
 }
 
 void MainWindow::clear_fields() 
