@@ -26,9 +26,13 @@
 #ifndef BLOG_LOCAL_HPP
 #define BLOG_LOCAL_HPP
 
-#include "blog/interface_blog.hpp"
+#include <blog/interface_blog.hpp>
 #include <boost/filesystem.hpp>
 #include <string>
+#include <vector>
+//#include <map>
+#include <blog/post.hpp>
+#include <blog/persistor_blog.hpp>
 
 extern "C" {    
 #include "post/post.h"
@@ -54,14 +58,13 @@ public:
     Blog_local& operator=(const basics::Blog_local&) = delete;
 
     void add_post(std::string, std::string, std::string);
+
     void generate(const int post_per_page = 10, const std::string page_base_name = "index");
-    bool is_ready();
     
 private:
-    // Wrapper C structures for all libxml2 stuff
-    BlogContent content_ptr_;
-    BlogRoot root_ptr_;
-    BlogXsl xsl_ptr_;
+    std::vector<basics::Post> posts_;
+//    std::map<bdt::ptime, basics::Post> post_index_;
+    
 
     bfs::path blog_instance_folder_;
     bfs::path content_file_;
@@ -70,17 +73,7 @@ private:
     bfs::path output_folder_;
     bfs::path xsl_file_;
 
-    bool content_loaded_;
-    bool root_loaded_;
-    bool xsl_loaded_;
-
-    void load_content();
-    void load_root();
-    void load_xsl();
-    
-    
-
-   
+    basics::Persistor_blog persistor_;   
 };
 
 } // namespace

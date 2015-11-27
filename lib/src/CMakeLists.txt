@@ -12,5 +12,5 @@ add_definitions( -Weffc++ -std=c++11 )
 add_library( utils boost_utils.cpp simple_logger.cpp )
 target_link_libraries( utils ${Boost_LIBRARIES} )
 
-add_library( blog factory_blog.cpp blog_local.cpp )
+add_library( blog factory_blog.cpp blog_local.cpp persistor_blog.cpp )
 target_link_libraries( blog post utils ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} )

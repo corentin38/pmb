@@ -35,10 +35,18 @@ class Interface_blog {
 public:
     virtual ~Interface_blog() {};
 
-    virtual void add_post(const std::string title, const std::string author, const std::string life) = 0;
-    virtual void generate(const int post_per_page = 10, const std::string page_base_name = "index") = 0;
+//    virtual std::vector<basics::Post> get_posts() = 0;
     
-    virtual bool is_ready() = 0;
+    virtual void add_post(const std::string title, const std::string author, const std::string life) = 0;
+//    virtual void add_post(basics::Post) = 0;
+    
+//    virtual void remove_post(bdt::Datetime) = 0;
+//    virtual void remove_post(std::string) = 0;
+    
+//    virtual void write_content() = 0;
+//    virtual void write_save() = 0;
+
+    virtual void generate(const int post_per_page = 10, const std::string page_base_name = "index") = 0;
     
 };
 
