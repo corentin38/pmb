@@ -30,7 +30,7 @@
 #include <boost/filesystem.hpp>
 #include <string>
 #include <vector>
-//#include <map>
+#include <map>
 #include <blog/post.hpp>
 #include <blog/persistor_blog.hpp>
 
@@ -60,11 +60,23 @@ public:
     void add_post(std::string, std::string, std::string);
 
     void generate(const int post_per_page = 10, const std::string page_base_name = "index");
+
+    inline std::string get_blog_path() 
+    {
+        return blog_instance_folder_.string();
+    }
+
+    inline bfs::path get_blog_folder() 
+    {
+        return blog_instance_folder_;
+    }
+
+    // Utility
+    template<class U, class T>
+    static std::vector<T> map_values( const std::map<U, T> &input_map );
     
 private:
-    std::vector<basics::Post> posts_;
-//    std::map<bdt::ptime, basics::Post> post_index_;
-    
+    std::map<bdt::ptime, basics::Post> post_index_;    
 
     bfs::path blog_instance_folder_;
     bfs::path content_file_;

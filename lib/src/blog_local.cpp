@@ -37,6 +37,7 @@ basics::Blog_local::Blog_local(
     bfs::path output_folder,
     bfs::path xsl_file)
     : Interface_blog(), 
+      post_index_(),
       blog_instance_folder_(blog_instance_folder), 
       content_file_(content_file), 
       archive_folder_(archive_folder),
@@ -45,7 +46,12 @@ basics::Blog_local::Blog_local(
       xsl_file_(xsl_file),
       persistor_(content_file)
 {
-    posts_ = persistor_.read_posts();
+    std::vector<basics::Post> posts = persistor_.read_posts();
+    
+    std::vector<basics::Post>::iterator it(posts.begin()), end(posts.end());
+    for (; it != end; ++it) {
+        post_index_[ it->get_timestamp() ] = *it;
+    }
 }
 
 basics::Blog_local::~Blog_local()
@@ -55,11 +61,9 @@ basics::Blog_local::~Blog_local()
 void basics::Blog_local::add_post(std::string title, std::string author, std::string life) 
 {
     basics::Post another_post(title, author, life);
-    posts_.push_back(another_post);
-    //post_index_[another_post.get_timestamp()] = another_post;
+    post_index_[ another_post.get_timestamp() ] = another_post;    
     
-    
-    persistor_.write_posts(posts_);
+    persistor_.write_posts( map_values(post_index_) );
 }
 
 void basics::Blog_local::generate(const int post_per_page, const std::string page_base_name)
@@ -103,5 +107,21 @@ void basics::Blog_local::generate(const int post_per_page, const std::string pag
     }
     
     freeDocList(pages);
+    freeBlogContent(content_ptr);
+    freeBlogXsl(xsl_ptr);
+    freeBlogContext();
+}
+
+template<class U, class T> 
+std::vector<T> basics::Blog_local::map_values( const std::map<U, T> &input_map )
+{
+    std::vector<T> values;
+
+    typename std::map<U, T>::const_iterator it(input_map.begin()), end(input_map.end());
+    for (; it != end; ++it) {
+        values.push_back(it->second);
+    }
+
+    return values;
 }
 

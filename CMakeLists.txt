@@ -29,7 +29,7 @@ find_package( Qt5 REQUIRED Widgets )
 find_package( Threads REQUIRED )
 find_package( Boost COMPONENTS system filesystem log log_setup thread date_time REQUIRED )
 
-qt5_wrap_ui( QT_UI_FILES interface/mainwindow.ui interface/blogwizard.ui )
+qt5_wrap_ui( QT_UI_FILES interface/mainwindow.ui interface/blogwizard.ui interface/posteditor.ui )
 
 add_subdirectory( libc )
 add_subdirectory( lib )
@@ -38,6 +38,7 @@ add_executable(
     ${PROJECT_NAME} 
     main.cpp
     interface/blogwizard.cpp
+    interface/posteditor.cpp
     interface/mainwindow.cpp
     ${QT_UI_FILES}
     ${QT_RCC_FILES}

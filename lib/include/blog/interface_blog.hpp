@@ -27,8 +27,11 @@
 #define INTERFACE_BLOG_HPP
 
 #include <string>
+#include <boost/filesystem.hpp>
 
 namespace basics {
+
+namespace bfs = boost::filesystem;
 
 class Interface_blog {
    
@@ -47,6 +50,9 @@ public:
 //    virtual void write_save() = 0;
 
     virtual void generate(const int post_per_page = 10, const std::string page_base_name = "index") = 0;
+  
+    virtual std::string get_blog_path() = 0;
+    virtual bfs::path get_blog_folder() = 0;
     
 };
 

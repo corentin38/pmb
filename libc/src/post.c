@@ -367,3 +367,12 @@ void saveBlogHtmlPage(const char *currentPagePath, BlogHtmlPage blogPage, BlogXs
 int saveBlogContent(const char *contentPath, BlogContent blogContent) {
    return xmlSaveFormatFile(contentPath, (xmlDocPtr) blogContent, 1);
 }
+
+void freeBlogXsl(BlogXsl blogXsl) {
+   xsltFreeStylesheet((xsltStylesheetPtr) blogXsl);
+}
+
+void freeBlogContext() {
+   xsltCleanupGlobals();
+   xmlCleanupParser();
+}

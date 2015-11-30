@@ -136,6 +136,8 @@ void freeBlogContent(BlogContent blogContent);
 BlogRoot loadBlogRoot(BlogContent blogContent);
 void freeBlogRoot(BlogRoot blogRoot);
 BlogXsl loadBlogXsl(const char *xslPath);
+void freeBlogXsl(BlogXsl blogXsl);
+void freeBlogContext();
 BlogPost createPost(const char *author, const char *title, const char *life);
 BlogPost addPostToRoot(BlogRoot blogRoot, BlogPost blogPost);
 BlogHtmlPage runXslOnPage(BlogXsl blogXsl, DocList *pages, int pageNr);

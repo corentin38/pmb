@@ -37,6 +37,8 @@ namespace bdt = boost::posix_time;
 class Post {
    
 public:
+    Post() : title_(), author_(), life_(), timestamp_() {}
+
     Post(std::string title, std::string author, std::string life)
         : title_(title), author_(author), life_(life), timestamp_(bdt::second_clock::local_time())
     {}
