@@ -26,7 +26,6 @@ add_definitions( -Wall -Wextra -std=c++11 )
 ADD_DEFINITIONS( -DBOOST_LOG_DYN_LINK )
 
 find_package( Qt5 REQUIRED Widgets )
-find_package( Threads REQUIRED )
 find_package( Boost COMPONENTS system filesystem log log_setup thread date_time REQUIRED )
 
 qt5_wrap_ui( QT_UI_FILES interface/mainwindow.ui interface/blogwizard.ui interface/posteditor.ui )

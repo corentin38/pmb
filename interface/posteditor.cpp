@@ -36,7 +36,29 @@ PostEditor::PostEditor(QWidget *parent) :
 
 PostEditor::~PostEditor()
 {
-delete ui;
+    delete ui;
 }
-    
+
+void PostEditor::on_clearButton_clicked()
+{
+    ui->titleEdit->clear();
+    ui->authorEdit->clear();
+    ui->lifeEdit->clear();    
+}
+
+const std::string PostEditor::get_post_title() const
+{
+    return ui->titleEdit->text().toStdString();
+}
+
+const std::string PostEditor::get_post_author() const
+{
+    return ui->authorEdit->text().toStdString();
+}
+
+const std::string PostEditor::get_post_life() const
+{
+    return ui->lifeEdit->toPlainText().toStdString();
+}
+
 

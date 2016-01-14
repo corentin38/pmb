@@ -55,7 +55,11 @@ public:
     
     std::string select_blog(std::string&);
     
+    std::string add_post_to_current_blog(std::string&, std::string&, std::string&);
+
     std::vector<std::string> get_blog_names();
+
+    std::vector<std::string> get_post_id_list();
 
     inline std::string get_current_blog_path() 
     {

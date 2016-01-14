@@ -58,6 +58,11 @@ basics::Blog_local::~Blog_local()
 {
 }
 
+std::vector<basics::Post> basics::Blog_local::get_posts()
+{
+    return map_values(post_index_);
+}
+
 void basics::Blog_local::add_post(std::string title, std::string author, std::string life) 
 {
     basics::Post another_post(title, author, life);

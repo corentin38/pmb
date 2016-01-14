@@ -201,12 +201,12 @@
   </action>
   <action name="actionGenerate">
    <property name="text">
-    <string>Générer</string>
+    <string>générer</string>
    </property>
   </action>
   <action name="actionSave">
    <property name="text">
-    <string>Enregistrer</string>
+    <string>enregistrer</string>
    </property>
   </action>
  </widget>

@@ -26,41 +26,35 @@
 #include <blog/controller_blog.hpp>
 
 #include <blog/factory_blog.hpp>
-#include "blogwizard.hpp"
 #include <iostream>
 #include <stdexcept>
 
-basics::Controller_blog::Controller_blog(basics::Simple_logger logger, ) 
-    : logger_(logger), current_blog_(), all_blogs()
+basics::Controller_blog::Controller_blog(basics::Simple_logger logger) 
+    : logger_(logger), current_blog_(), all_blogs_()
 {
 }
 
-bool basics::Controller_blog::has_current_blog()
+bool basics::Controller_blog::has_current_blog() const
 {
-    return current_blog_;
+    if (current_blog_) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
     
 void basics::Controller_blog::generate_current_blog()
 {
-    if (!this.has_current_blog()) {
+    if (!this->has_current_blog()) {
         throw new std::runtime_error("No blog currently selected");
     }
 
-    logger_.info("Début de l'ajout d'un nouveau post et de la génération du blog");
+    logger_.info("Début de la génération du blog");
 
     current_blog_->generate();
-    
-//    std::string title =  ui->titleEdit->text().toStdString();
-//    std::string author =  ui->authorEdit->text().toStdString();
-//    std::string life =  ui->lifeEdit->toPlainText().toStdString();
-//    logger_.info("Titre : " + title);
-//    logger_.info("Auteur : " + author);
-//    logger_.info("life : " + life);
 
-//    blog_->add_post(title, author, life);
-
-
-    logger_.info("Post ajouté et blog généré");
+    logger_.info("Blog généré");
 }
 
     
@@ -76,7 +70,7 @@ std::string basics::Controller_blog::create_new_blog(std::string &blog_name, std
     basics::Factory_blog fact;
     current_blog_ = fact.create_local_instance(blog_folder.string(), override, sample);
 
-    all_blogs_->insert(current_blog_);
+    all_blogs_.insert(current_blog_->get_blog_folder());
 
     return current_blog_->get_blog_path();
 }
@@ -90,37 +84,66 @@ std::string basics::Controller_blog::open_blog(std::string &blog_folder_path)
         throw new std::runtime_error("Invalid blog folder");
     }    
 
-    if (has_current_blog() && blog_folder == blog_->get_blog_folder()) {
+    if (has_current_blog() && blog_folder == current_blog_->get_blog_folder()) {
         // Blog already loaded
-        return;
+        return blog_folder.string();
     }
 
     basics::Factory_blog fact;
     current_blog_ = fact.load_local_instance(blog_folder.string());
 
-    all_blogs_->insert(current_blog_);
+    all_blogs_.insert(current_blog_->get_blog_folder());
 
     logger_.info(std::string("Instance chargée : ") + blog_folder_path);
-
     return blog_folder.string();
 }
     
-void basics::Controller_blog::select_blog(std::string &blog_folder_path)
+std::string basics::Controller_blog::select_blog(std::string &blog_folder_path)
 {
     return open_blog(blog_folder_path);
+}
+
+std::string 
+basics::Controller_blog::add_post_to_current_blog(
+    std::string& title, 
+    std::string& author, 
+    std::string& life)
+{
+    if (has_current_blog()) {
+        current_blog_->add_post(title, author, life);
+    }
+    return "blabla";
 }
 
 std::vector<std::string> basics::Controller_blog::get_blog_names()
 {
     std::vector<std::string> paths;
     
-    std::vector<std::string>::const_iterator it = all_blogs_.begin();
-    std::vector<std::string>::const_iterator end = all_blogs_.end();
+    std::set<bfs::path>::const_iterator it = all_blogs_.begin();
+    std::set<bfs::path>::const_iterator end = all_blogs_.end();
     
     for (; it != end; ++it) {
-        paths.push_back(*it);
+        paths.push_back(it->string());
     }
     
     return paths;
 }
+
+std::vector<std::string> basics::Controller_blog::get_post_id_list()
+{
+    std::vector<std::string> post_id_list;
+
+    if (!has_current_blog()) {
+        return post_id_list;
+    }
+    
+    std::vector<basics::Post> posts = current_blog_->get_posts();
+    
+    for (basics::Post post : posts) {
+        post_id_list.push_back(post.get_timestamp_str());
+    }
+    
+    return post_id_list;
+}
+
 

@@ -23,8 +23,8 @@
  * @file posteditor.hpp
  */
 
-#ifndef BLOGWIZARD_HPP
-#define BLOGWIZARD_HPP
+#ifndef POSTEDITOR_HPP
+#define POSTEDITOR_HPP
 
 #include <QDialog>
 
@@ -40,13 +40,12 @@ public:
     explicit PostEditor(QWidget *parent = 0);
     ~PostEditor();
 
-//    const std::string get_blog_name() const;
-//    const std::string get_blog_path() const;
-//    bool get_override_checked() const;
-//    bool get_sample_checked() const;
+    const std::string get_post_title() const;
+    const std::string get_post_author() const;
+    const std::string get_post_life() const;
 
 private slots:
-//    void on_browseButton_clicked();
+    void on_clearButton_clicked();
 
 private:
     Ui::PostEditor *ui;

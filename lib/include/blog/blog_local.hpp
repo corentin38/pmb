@@ -57,6 +57,8 @@ public:
     Blog_local(const basics::Blog_local&) = delete;
     Blog_local& operator=(const basics::Blog_local&) = delete;
 
+    std::vector<basics::Post> get_posts();
+
     void add_post(std::string, std::string, std::string);
 
     void generate(const int post_per_page = 10, const std::string page_base_name = "index");

@@ -3,8 +3,11 @@
 
 #include <QMainWindow>
 #include <blog/controller_blog.hpp>
-#include <utils/simple_logger.hpp>
 #include <QString>
+
+#ifndef Q_MOC_RUN
+#include "utils/simple_logger.hpp"
+#endif
 
 namespace Ui {
 class MainWindow;
@@ -35,8 +38,11 @@ private:
     basics::Simple_logger logger_;
     basics::Controller_blog ctrl_blog_;
 
+    bool clearing_combo_;
+
 //    void clear_fields();
     void update_blog_list();
+    void update_post_list();
     void warning(std::string);
     void status(std::string, int seconds = 5);
 };

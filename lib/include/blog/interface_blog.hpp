@@ -28,6 +28,7 @@
 
 #include <string>
 #include <boost/filesystem.hpp>
+#include <blog/post.hpp>
 
 namespace basics {
 
@@ -38,7 +39,7 @@ class Interface_blog {
 public:
     virtual ~Interface_blog() {};
 
-//    virtual std::vector<basics::Post> get_posts() = 0;
+    virtual std::vector<basics::Post> get_posts() = 0;
     
     virtual void add_post(const std::string title, const std::string author, const std::string life) = 0;
 //    virtual void add_post(basics::Post) = 0;
