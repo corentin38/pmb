@@ -58,8 +58,11 @@ public:
     Blog_local& operator=(const basics::Blog_local&) = delete;
 
     std::vector<basics::Post> get_posts();
+    std::vector<std::string> get_post_ids();
 
     void add_post(std::string, std::string, std::string);
+
+    std::string get_post_content(std::string);
 
     void generate(const int post_per_page = 10, const std::string page_base_name = "index");
 
@@ -76,9 +79,11 @@ public:
     // Utility
     template<class U, class T>
     static std::vector<T> map_values( const std::map<U, T> &input_map );
+    template<class U, class T> 
+    static std::vector<U> map_keys( const std::map<U, T> &input_map );
     
 private:
-    std::map<bdt::ptime, basics::Post> post_index_;    
+    std::map<std::string, basics::Post> post_index_;    
 
     bfs::path blog_instance_folder_;
     bfs::path content_file_;

@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <QStringList>
 #include <vector>
+#include <QStringListModel>
 
 // TO DEL
 #include <iostream>
@@ -28,6 +29,7 @@ MainWindow::MainWindow(basics::Simple_logger logger, QWidget *parent) :
     status("Aucun blog chargé");
     
 //    ui->blogCB->addItem(tr("(Aucun)"));
+    update_frame();
 }
 
 MainWindow::~MainWindow()
@@ -90,8 +92,7 @@ void MainWindow::on_actionNew_triggered()
         return;
     }
 
-    update_blog_list();
-    update_post_list();
+    update_frame();
     
     logger_.info("Nouveau blog créé avec succès");
     delete wiz;
@@ -122,16 +123,7 @@ void MainWindow::on_actionOpen_triggered()
     }
 
     status("Blog chargé !");
-
-    try {
-        
-    update_blog_list();
-    }
-    catch (const std::runtime_error &e) {
-        std::cout << "Err : " << e.what() << std::endl;
-    }
-    
-    update_post_list();
+    update_frame();
 }
 
 void MainWindow::on_addPostButton_clicked()
@@ -156,7 +148,7 @@ void MainWindow::on_addPostButton_clicked()
         return;
     }
     
-    update_post_list();
+    update_frame();
     
     logger_.info("Nouveau blog créé avec succès");
     delete editor;
@@ -164,6 +156,7 @@ void MainWindow::on_addPostButton_clicked()
 
 void MainWindow::on_remPostButton_clicked()
 {
+    update_frame();
 }
 
 void MainWindow::on_blogCB_currentIndexChanged(const QString &text) 
@@ -180,16 +173,54 @@ void MainWindow::on_blogCB_currentIndexChanged(const QString &text)
     std::string text_str = text.toStdString();
     ctrl_blog_.select_blog(text_str);
 
-    update_blog_list();
-    update_post_list();
+    update_frame();
 }
 
-void MainWindow::update_blog_list()
+void MainWindow::on_postList_indexesMoved(const QModelIndexList & indexes) 
+{
+    if (indexes.count() != 1) return;
+    
+    std::string post_id = indexes.first().data().toString().toStdString();
+    try {
+        ui->postDisplay->setText(QString::fromStdString(ctrl_blog_.get_post_content(post_id)));    
+    }
+    catch (const std::exception& e) {
+        warning(std::string("Impossible d'afficher le post !\n") + std::string(e.what()));
+        return;
+    }
+}
+
+void MainWindow::update_post_list()
+{
+    std::vector<std::string> post_ids = ctrl_blog_.get_post_id_list();
+    std::vector<std::string>::const_iterator it = post_ids.begin();
+    std::vector<std::string>::const_iterator end = post_ids.end();
+ 
+    QStringListModel *model = new QStringListModel();
+    QStringList post_id_list;
+
+    for (; it != end; ++it) {
+        post_id_list << QString::fromStdString(*it);
+    }
+    
+    model->setStringList(post_id_list);
+    ui->postList->setModel(model);    
+}
+
+void MainWindow::update_blog_combobox() 
 {
     clearing_combo_ = true;
     ui->blogCB->clear();
 
     std::vector<std::string> blog_list = ctrl_blog_.get_blog_names();
+
+    if (blog_list.size() == 0) {
+        ui->blogCB->setEnabled(false);
+        clearing_combo_ = false;
+    }
+
+    ui->blogCB->setEnabled(true);
+
     std::vector<std::string>::const_iterator it = blog_list.begin();
     std::vector<std::string>::const_iterator end = blog_list.end();
     
@@ -207,11 +238,11 @@ void MainWindow::update_blog_list()
     clearing_combo_ = false;
 }
 
-void MainWindow::update_post_list()
+void MainWindow::update_frame() 
 {
-    
+    update_post_list();
+    update_blog_combobox();
 }
-
 
 void MainWindow::warning(std::string message) 
 {

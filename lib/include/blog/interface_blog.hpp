@@ -40,6 +40,8 @@ public:
     virtual ~Interface_blog() {};
 
     virtual std::vector<basics::Post> get_posts() = 0;
+    virtual std::vector<std::string> get_post_ids() = 0;
+    virtual std::string get_post_content(std::string) = 0;
     
     virtual void add_post(const std::string title, const std::string author, const std::string life) = 0;
 //    virtual void add_post(basics::Post) = 0;

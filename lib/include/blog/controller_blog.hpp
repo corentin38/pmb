@@ -61,6 +61,8 @@ public:
 
     std::vector<std::string> get_post_id_list();
 
+    std::string get_post_content(std::string&);
+
     inline std::string get_current_blog_path() 
     {
         if (has_current_blog()) {

@@ -50,7 +50,7 @@ basics::Blog_local::Blog_local(
     
     std::vector<basics::Post>::iterator it(posts.begin()), end(posts.end());
     for (; it != end; ++it) {
-        post_index_[ it->get_timestamp() ] = *it;
+        post_index_[ it->get_timestamp_str() ] = *it;
     }
 }
 
@@ -63,10 +63,25 @@ std::vector<basics::Post> basics::Blog_local::get_posts()
     return map_values(post_index_);
 }
 
+std::vector<std::string> basics::Blog_local::get_post_ids()
+{
+    return map_keys(post_index_);
+}
+
+std::string basics::Blog_local::get_post_content(std::string timestamp) 
+{
+    std::map<std::string, basics::Post>::iterator exists = post_index_.find(timestamp);
+    if (exists != post_index_.end()) return exists->second.get_life();
+
+    std::stringstream err;
+    err << "Pas de post avec un id = " << timestamp;
+    throw std::runtime_error(err.str());
+}
+
 void basics::Blog_local::add_post(std::string title, std::string author, std::string life) 
 {
     basics::Post another_post(title, author, life);
-    post_index_[ another_post.get_timestamp() ] = another_post;    
+    post_index_[ another_post.get_timestamp_str() ] = another_post;    
     
     persistor_.write_posts( map_values(post_index_) );
 }
@@ -128,5 +143,18 @@ std::vector<T> basics::Blog_local::map_values( const std::map<U, T> &input_map )
     }
 
     return values;
+}
+
+template<class U, class T> 
+std::vector<U> basics::Blog_local::map_keys( const std::map<U, T> &input_map )
+{
+    std::vector<U> keys;
+
+    typename std::map<U, T>::const_iterator it(input_map.begin()), end(input_map.end());
+    for (; it != end; ++it) {
+        keys.push_back(it->first);
+    }
+
+    return keys;
 }
 

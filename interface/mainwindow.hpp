@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <blog/controller_blog.hpp>
 #include <QString>
+#include <QModelIndexList>
 
 #ifndef Q_MOC_RUN
 #include "utils/simple_logger.hpp"
@@ -29,7 +30,8 @@ private slots:
     void on_actionNew_triggered();
     void on_actionOpen_triggered();
     void on_blogCB_currentIndexChanged(const QString&);
-
+    void on_postList_indexesMoved(const QModelIndexList &);
+    
     void on_addPostButton_clicked();
     void on_remPostButton_clicked();
 
@@ -41,8 +43,9 @@ private:
     bool clearing_combo_;
 
 //    void clear_fields();
-    void update_blog_list();
+    void update_blog_combobox();
     void update_post_list();
+    void update_frame();
     void warning(std::string);
     void status(std::string, int seconds = 5);
 };
