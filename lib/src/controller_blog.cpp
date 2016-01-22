@@ -131,11 +131,20 @@ std::vector<std::string> basics::Controller_blog::get_blog_names()
 
 std::vector<std::string> basics::Controller_blog::get_post_id_list()
 {
+    if (!has_current_blog()) {
+        std::vector<std::string> empty;
+        return empty;
+    }
+    
     return current_blog_->get_post_ids();
 }
 
 std::string basics::Controller_blog::get_post_content(std::string &timestamp)
 {
+    if (!has_current_blog()) {
+        return "";
+    }
+
     return current_blog_->get_post_content(timestamp);
 }
 

@@ -176,11 +176,9 @@ void MainWindow::on_blogCB_currentIndexChanged(const QString &text)
     update_frame();
 }
 
-void MainWindow::on_postList_indexesMoved(const QModelIndexList & indexes) 
+void MainWindow::on_postList_clicked(const QModelIndex & index) 
 {
-    if (indexes.count() != 1) return;
-    
-    std::string post_id = indexes.first().data().toString().toStdString();
+    std::string post_id = index.data().toString().toStdString();
     try {
         ui->postDisplay->setText(QString::fromStdString(ctrl_blog_.get_post_content(post_id)));    
     }

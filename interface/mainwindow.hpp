@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <blog/controller_blog.hpp>
 #include <QString>
-#include <QModelIndexList>
+#include <QModelIndex>
 
 #ifndef Q_MOC_RUN
 #include "utils/simple_logger.hpp"
@@ -30,7 +30,7 @@ private slots:
     void on_actionNew_triggered();
     void on_actionOpen_triggered();
     void on_blogCB_currentIndexChanged(const QString&);
-    void on_postList_indexesMoved(const QModelIndexList &);
+    void on_postList_clicked(const QModelIndex &);
     
     void on_addPostButton_clicked();
     void on_remPostButton_clicked();
