@@ -30,7 +30,7 @@
 #include <stdexcept>
 
 basics::Controller_blog::Controller_blog(basics::Simple_logger logger) 
-    : logger_(logger), current_blog_(), all_blogs_()
+    : logger_(logger), current_blog_(), persistor_()
 {
 }
 
@@ -51,9 +51,7 @@ void basics::Controller_blog::generate_current_blog()
     }
 
     logger_.info("Début de la génération du blog");
-
     current_blog_->generate();
-
     logger_.info("Blog généré");
 }
 

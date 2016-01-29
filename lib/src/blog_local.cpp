@@ -33,21 +33,19 @@ basics::Blog_local::Blog_local(
     bfs::path blog_instance_folder, 
     bfs::path content_file, 
     bfs::path archive_folder,
-    bfs::path engine_folder,
-    bfs::path output_folder,
-    bfs::path xsl_file)
+    bfs::path resources_folder,
+    bfs::path template_file,
+    std::vector<basics::Post> posts,
+    basics::Configuration_blog config)
     : Interface_blog(), 
       post_index_(),
+      configuration_blog_(config),
       blog_instance_folder_(blog_instance_folder), 
       content_file_(content_file), 
       archive_folder_(archive_folder),
-      engine_folder_(engine_folder),
-      output_folder_(output_folder),
-      xsl_file_(xsl_file),
-      persistor_(content_file)
-{
-    std::vector<basics::Post> posts = persistor_.read_posts();
-    
+      resources_folder_(output_folder),
+      template_file_(xsl_file)
+{    
     std::vector<basics::Post>::iterator it(posts.begin()), end(posts.end());
     for (; it != end; ++it) {
         post_index_[ it->get_timestamp_str() ] = *it;

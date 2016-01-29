@@ -3,8 +3,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 project( pmb )
 
 ## MAKE SURE THIS POINTS TO PROPER RESOURCE FILES ################
-set( XSL_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/my.xsl )
-set( CONFIG_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/config.xml )
+set( TEMPLATE_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/page.tpl )
 set( CONTENT_SAMPLE_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/content_sample.xml )
 set( CONTENT_EMPTY_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/content_empty.xml )
 set( BOOTSTRAP_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/dist )
@@ -34,20 +33,20 @@ add_subdirectory( libc )
 add_subdirectory( lib )
 
 add_executable(
-    ${PROJECT_NAME} 
-    main.cpp
-    interface/blogwizard.cpp
-    interface/posteditor.cpp
-    interface/mainwindow.cpp
-    ${QT_UI_FILES}
-    ${QT_RCC_FILES}
+  ${PROJECT_NAME} 
+  main.cpp
+  interface/blogwizard.cpp
+  interface/posteditor.cpp
+  interface/mainwindow.cpp
+  ${QT_UI_FILES}
+  ${QT_RCC_FILES}
 )
 
 include_directories(
-    ${Boost_INCLUDE_DIR}
-    ${LIBXML2_INCLUDE_DIR}
-    ${LIBXSLT_INCLUDE_DIR}
-    ${CMAKE_SOURCE_DIR}/lib/include
+  SYSTEM ${Boost_INCLUDE_DIR}
+  ${LIBXML2_INCLUDE_DIR}
+  ${LIBXSLT_INCLUDE_DIR}
+  ${CMAKE_SOURCE_DIR}/lib/include
 )
 
 target_link_libraries( ${PROJECT_NAME} blog )

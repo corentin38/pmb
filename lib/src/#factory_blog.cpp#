@@ -93,6 +93,8 @@ basics::Factory_blog::create_local_instance(
         bfs::copy_file(content_empty_resource, content_dest);        
     }
 
+    
+    
     std::unique_ptr<basics::Interface_blog> local_blog_ptr( 
         new basics::Blog_local(
             blog_folder,

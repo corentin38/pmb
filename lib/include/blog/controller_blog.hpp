@@ -45,25 +45,17 @@ class Controller_blog {
 public:
     Controller_blog(basics::Simple_logger);
     
-    bool has_current_blog() const;
-    
-    void generate_current_blog();
-    
     std::string create_new_blog(std::string&, std::string&, bool, bool);
-    
     std::string open_blog(std::string&);
     
-    std::string select_blog(std::string&);
-    
     std::string add_post_to_current_blog(std::string&, std::string&, std::string&);
-
-    std::vector<std::string> get_blog_names();
-
     std::vector<std::string> get_post_id_list();
-
     std::string get_post_content(std::string&);
 
-    inline std::string get_current_blog_path() 
+    bool has_current_blog() const;
+    void generate_current_blog();
+
+    inline std::string get_blog_path() 
     {
         if (has_current_blog()) {
             return current_blog_->get_blog_path();
@@ -71,13 +63,16 @@ public:
         return "";
     }
     
-
+//    std::string select_blog(std::string&);
+//    std::vector<std::string> get_blog_names();
+    
 private:
     basics::Simple_logger logger_;
     
     std::unique_ptr<basics::Interface_blog> current_blog_;
-    std::set<bfs::path> all_blogs_;    
+    //std::set<bfs::path> all_blogs_;    
 
+    basics::Persistor_blog persistor_;
 };
 
 } // namespace

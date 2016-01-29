@@ -33,6 +33,7 @@
 #include <map>
 #include <blog/post.hpp>
 #include <blog/persistor_blog.hpp>
+#include <blog/configuration_blog.hpp>
 
 extern "C" {    
 #include "post/post.h"
@@ -48,9 +49,10 @@ public:
     Blog_local(bfs::path blog_instance_folder, 
                bfs::path content_file, 
                bfs::path archive_folder,
-               bfs::path engine_folder,
-               bfs::path output_folder,
-               bfs::path xsl_file);
+               bfs::path resources_folder,
+               bfs::path template_file,
+               std::vector<basics::Post> posts,
+               basics::Configuration_blog config);
     
     ~Blog_local();
 
@@ -84,15 +86,13 @@ public:
     
 private:
     std::map<std::string, basics::Post> post_index_;    
-
+    basics::Configuration_blog configuration_;
+    
     bfs::path blog_instance_folder_;
     bfs::path content_file_;
     bfs::path archive_folder_;
-    bfs::path engine_folder_;
-    bfs::path output_folder_;
-    bfs::path xsl_file_;
-
-    basics::Persistor_blog persistor_;   
+    bfs::path resources_folder_;
+    bfs::path template_file_;
 };
 
 } // namespace
