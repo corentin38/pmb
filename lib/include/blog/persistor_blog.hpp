@@ -29,7 +29,7 @@
 #include <vector>
 #include <rapidxml/rapidxml.hpp>
 #include <boost/filesystem.hpp>
-#include <blog/interface_blog.hpp>
+#include <blog/persistable_blog.hpp>
 
 namespace basics {
 
@@ -38,10 +38,10 @@ namespace bfs = boost::filesystem;
 class Persistor_blog {
    
 public:
-    Persistor_blog(bfs::path);
+    Persistor_blog();
 
-    basics::Interface_blog* read_blog(bfs::path);
-    void write_blog(bfs::path, basics::Interface_blog*);
+    basics::Persistable_blog read_blog(bfs::path);
+    void write_blog(bfs::path, basics::Persistable_blog);
 private:
 
     /** get node value */
@@ -59,17 +59,17 @@ private:
      * works with any name for value and key as long as there is just
      * a list of single elements with single attributes
      */
-    std::map<std::string, std::string> nvs(rapidxml::xml_node *parent, std::string name);
+    std::map<std::string, std::string> nvs(rapidxml::xml_node<> *parent, std::string name);
 
     /** write node of name "name" and value "value" with optional attribute */
-    void basics::Persistor_blog::wn(rapidxml::xml_node<> *parent,
+    void wn(rapidxml::xml_node<> *parent,
                                     std::string name,
                                     std::string value,
                                     std::string attr_name = "",
                                     std::string attr_value = "");
 
     /** write xml map of nodes */
-    void basics::Persistor_blog::wns(rapidxml::xml_node<> *parent,
+    void wns(rapidxml::xml_node<> *parent,
                                      std::string map_name,
                                      std::string key_name,
                                      std::string val_name,

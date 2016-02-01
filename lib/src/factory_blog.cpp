@@ -23,11 +23,12 @@
  * @file factory_blog.cpp
  */
 
-#include "blog/factory_blog.hpp"
-#include "blog/interface_blog.hpp"
-#include "blog/blog_local.hpp"
-#include "blog_constants.hpp"
-#include "utils/boost_utils.hpp"
+#include <blog/factory_blog.hpp>
+#include <blog/interface_blog.hpp>
+#include <blog/blog_local.hpp>
+#include <blog_constants.hpp>
+#include <blog/persistable_blog.hpp>
+#include <utils/boost_utils.hpp>
 
 #include <iostream>
 #include <stdexcept>
@@ -93,13 +94,18 @@ basics::Factory_blog::create_local_instance(
         bfs::copy_file(content_empty_resource, content_dest);        
     }
 
+    basics::Persistor_blog persistor;
+    basics::Persistable_blog blog = persistor.read_blog(content_dest);
+
     std::unique_ptr<basics::Interface_blog> local_blog_ptr( 
         new basics::Blog_local(
             blog_folder,
             content_dest,
             archive_subdir,
             resources_subdir,
-            template_dest)
+            template_dest,
+            blog.posts(),
+            blog.config())
         );
     
     return std::move(local_blog_ptr);
@@ -146,13 +152,18 @@ basics::Factory_blog::load_local_instance(std::string blog_folder_path)
         throw std::runtime_error( err.str() );
     }    
 
+    basics::Persistor_blog persistor;
+    basics::Persistable_blog blog = persistor.read_blog(content_file);
+
     std::unique_ptr<basics::Interface_blog> local_blog_ptr( 
         new basics::Blog_local(
             blog_folder,
             content_file,
             archive_subdir,
             resources_subdir,
-            template_file)
+            template_file,
+            blog.posts(),
+            blog.config())
         );
     
     return std::move(local_blog_ptr);

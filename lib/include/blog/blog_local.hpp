@@ -78,6 +78,11 @@ public:
         return blog_instance_folder_;
     }
 
+    inline bfs::path get_template_file() 
+    {
+        return template_file_;
+    }
+
     // Utility
     template<class U, class T>
     static std::vector<T> map_values( const std::map<U, T> &input_map );

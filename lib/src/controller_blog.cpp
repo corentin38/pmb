@@ -24,7 +24,7 @@
  */
 
 #include <blog/controller_blog.hpp>
-
+#include <blog/generator.hpp>
 #include <blog/factory_blog.hpp>
 #include <iostream>
 #include <stdexcept>
@@ -51,7 +51,14 @@ void basics::Controller_blog::generate_current_blog()
     }
 
     logger_.info("Début de la génération du blog");
-    current_blog_->generate();
+    basics::Generator gen;
+    basics::Persistable_blog blog(current_blog_.posts(),
+                                  current_blog_.config());    
+
+    gen.templatize_the_fucker(current_blog_.get_template_file(),
+                              current_blog_.get_blog_folder(),
+                              blog);
+    
     logger_.info("Blog généré");
 }
 
@@ -67,8 +74,6 @@ std::string basics::Controller_blog::create_new_blog(std::string &blog_name, std
 
     basics::Factory_blog fact;
     current_blog_ = fact.create_local_instance(blog_folder.string(), override, sample);
-
-    all_blogs_.insert(current_blog_->get_blog_folder());
 
     return current_blog_->get_blog_path();
 }
@@ -90,16 +95,9 @@ std::string basics::Controller_blog::open_blog(std::string &blog_folder_path)
     basics::Factory_blog fact;
     current_blog_ = fact.load_local_instance(blog_folder.string());
 
-    all_blogs_.insert(current_blog_->get_blog_folder());
-
     logger_.info(std::string("Instance chargée : ") + blog_folder_path);
     return blog_folder.string();
-}
-    
-std::string basics::Controller_blog::select_blog(std::string &blog_folder_path)
-{
-    return open_blog(blog_folder_path);
-}
+}    
 
 std::string 
 basics::Controller_blog::add_post_to_current_blog(
@@ -110,23 +108,23 @@ basics::Controller_blog::add_post_to_current_blog(
     if (has_current_blog()) {
         current_blog_->add_post(title, author, life);
     }
-    return "blabla";
+    return "greetings from add_post_to_current_blog";
 }
 
-std::vector<std::string> basics::Controller_blog::get_blog_names()
-{
-    std::vector<std::string> paths;
-    
-    std::set<bfs::path>::const_iterator it = all_blogs_.begin();
-    std::set<bfs::path>::const_iterator end = all_blogs_.end();
-    
-    for (; it != end; ++it) {
-        paths.push_back(it->string());
-    }
-    
-    return paths;
-}
-
+//std::vector<std::string> basics::Controller_blog::get_blog_names()
+//{
+//    std::vector<std::string> paths;
+//    
+//    std::set<bfs::path>::const_iterator it = all_blogs_.begin();
+//    std::set<bfs::path>::const_iterator end = all_blogs_.end();
+//    
+//    for (; it != end; ++it) {
+//        paths.push_back(it->string());
+//    }
+//    
+//    return paths;
+//}
+//
 std::vector<std::string> basics::Controller_blog::get_post_id_list()
 {
     if (!has_current_blog()) {
