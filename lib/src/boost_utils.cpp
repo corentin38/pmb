@@ -23,7 +23,7 @@
  * @file boost_utils.cpp
  */
 
-#include "utils/boost_utils.hpp"
+#include <utils/boost_utils.hpp>
 #include <stdexcept>
 #include <sstream>
 
@@ -62,4 +62,42 @@ void basics::copy_folder(const bfs::path& frompath, const bfs::path& topath)
         }
     }
 }
+
+std::string basics::escape_string(const std::string input)
+{
+    std::stringstream out;
+    for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
+        if (*it == '\n') {
+            out << "\\n";
+            continue;
+        }
+        out << *it;
+    }
+    return out.str();
+}
+
+std::string basics::unescape_string(const std::string input)
+{
+    std::stringstream out;
+    for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
+        if (*it == '\\') {
+            ++it;
+            if (it == input.end()) {
+                out << '\\';
+                continue;
+            }
+
+            if (*it == 'n') {
+                out << '\n';
+                continue;
+            } else {
+                out << '\\' << *it;
+                continue;
+            }
+        }
+        out << *it;
+    }
+    return out.str();
+}
+
 

@@ -94,9 +94,9 @@ void MainWindow::on_actionNew_triggered()
         return;
     }
 
-    update_frame();
 
     blog_history_.push_back(new_blog_path);
+    update_frame();
     
     logger_.info("Nouveau blog créé avec succès");
     delete wiz;

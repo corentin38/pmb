@@ -28,6 +28,7 @@
 
 
 #include <boost/filesystem.hpp>
+#include <string>
 
 namespace basics {
 
@@ -37,6 +38,9 @@ namespace bfs = boost::filesystem;
  * Using : copy_directory( bfs::path("/home/toto/test"), bfs::path("/home/toto/test_copy") ;)
  */
 void copy_folder(const bfs::path& frompath, const bfs::path& topath);
+
+std::string escape_string(std::string);
+std::string unescape_string(std::string);
 
 } // namespace
 

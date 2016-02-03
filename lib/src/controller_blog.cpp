@@ -24,6 +24,7 @@
  */
 
 #include <blog/controller_blog.hpp>
+#include <utils/boost_utils.hpp>
 #include <blog/generator.hpp>
 #include <blog/factory_blog.hpp>
 #include <blog/persistable_blog.hpp>
@@ -107,7 +108,7 @@ basics::Controller_blog::add_post_to_current_blog(
     std::string& life)
 {
     if (has_current_blog()) {
-        current_blog_->add_post(title, author, life);
+        current_blog_->add_post(title, author, basics::escape_string(life));
         persist_current_blog();
     }
     return "greetings from add_post_to_current_blog";
@@ -143,7 +144,8 @@ std::string basics::Controller_blog::get_post_content(std::string &timestamp)
         return "";
     }
 
-    return current_blog_->get_post_content(timestamp);
+    std::string life = current_blog_->get_post_content(timestamp);
+    return basics::unescape_string(life);
 }
 
 

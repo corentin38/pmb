@@ -125,19 +125,8 @@ basics::Persistable_blog basics::Persistor_blog::read_blog(bfs::path content_sto
         posts.push_back(another_post);
     }
 
-    basics::Persistable_blog blog_ptr(
-        posts,
-        config);    
-    
-    return blog_ptr;
-    
-//    std::unique_ptr<basics::Persistable_blog> blog_ptr(
-//        new basics::Persistable_blog(
-//            posts,
-//            config)
-//        );    
-//    
-//    return std::move(blog_ptr);
+    basics::Persistable_blog blog_ptr(posts, config);
+    return blog_ptr;    
 }
 
 void basics::Persistor_blog::wn(rapidxml::xml_node<> *parent,
@@ -146,10 +135,16 @@ void basics::Persistor_blog::wn(rapidxml::xml_node<> *parent,
                                 std::string attr_name,
                                 std::string attr_value)
 {
-    rapidxml::xml_node<> *new_node = parent->document()->allocate_node(rapidxml::node_element, name.c_str(), value.c_str());
+    char* name_ptr = parent->document()->allocate_string(name.c_str());
+    char* value_ptr = parent->document()->allocate_string(value.c_str());
+
+    rapidxml::xml_node<> *new_node = parent->document()->allocate_node(rapidxml::node_element, name_ptr, value_ptr);
 
     if (attr_name != "") {
-        rapidxml::xml_attribute<> *new_attr = parent->document()->allocate_attribute(attr_name.c_str(), attr_value.c_str());
+        char* attr_name_ptr = parent->document()->allocate_string(attr_name.c_str());
+        char* attr_value_ptr = parent->document()->allocate_string(attr_value.c_str());
+
+        rapidxml::xml_attribute<> *new_attr = parent->document()->allocate_attribute(attr_name_ptr, attr_value_ptr);
         new_node->append_attribute(new_attr);
     }
     
@@ -165,17 +160,27 @@ void basics::Persistor_blog::wns(rapidxml::xml_node<> *parent,
                                  std::string attr_name,
                                  std::string attr_value) 
 {
-    rapidxml::xml_node<> *new_map = parent->document()->allocate_node(rapidxml::node_element, map_name.c_str());
+    char* map_name_ptr = parent->document()->allocate_string(map_name.c_str());
+    char* key_name_ptr = parent->document()->allocate_string(key_name.c_str());
+    char* val_name_ptr = parent->document()->allocate_string(val_name.c_str());
+
+    rapidxml::xml_node<> *new_map = parent->document()->allocate_node(rapidxml::node_element, map_name_ptr);
     parent->append_node(new_map);
 
     if (attr_name != "") {
-        rapidxml::xml_attribute<> *new_attr = parent->document()->allocate_attribute(attr_name.c_str(), attr_value.c_str());
+        char* attr_name_ptr = parent->document()->allocate_string(attr_name.c_str());
+        char* attr_value_ptr = parent->document()->allocate_string(attr_value.c_str());
+
+        rapidxml::xml_attribute<> *new_attr = parent->document()->allocate_attribute(attr_name_ptr, attr_value_ptr);
         new_map->append_attribute(new_attr);
     }
     
     for (std::map<std::string, std::string>::iterator it = key_val.begin(); it != key_val.end(); ++it) {
-        rapidxml::xml_node<> *val = parent->document()->allocate_node(rapidxml::node_element, val_name.c_str(), it->second.c_str());
-        rapidxml::xml_attribute<> *key = parent->document()->allocate_attribute(key_name.c_str(), it->first.c_str());
+        char* key_ptr = parent->document()->allocate_string(it->first.c_str());
+        char* value_ptr = parent->document()->allocate_string(it->second.c_str());
+
+        rapidxml::xml_node<> *val = parent->document()->allocate_node(rapidxml::node_element, val_name_ptr, value_ptr);
+        rapidxml::xml_attribute<> *key = parent->document()->allocate_attribute(key_name_ptr, key_ptr);
         val->append_attribute(key);
         new_map->append_node(val);
     }
@@ -200,7 +205,7 @@ void basics::Persistor_blog::write_blog(bfs::path content_storage_file, basics::
 
     // Configuration <config>
     rapidxml::xml_node<> *conf = content.allocate_node(rapidxml::node_element, "config");
-    content.append_node(conf);
+    blog_root->append_node(conf);
     wn(conf, "meta-desc", config.meta_desc_);
     wn(conf, "meta-author", config.meta_author_);
     wn(conf, "meta-title", config.meta_title_);
