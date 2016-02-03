@@ -55,7 +55,7 @@ public:
 
     bool has_current_blog() const;
     void generate_current_blog();
-
+    
     inline std::string get_blog_path() 
     {
         if (has_current_blog()) {
@@ -71,6 +71,8 @@ private:
     //std::set<bfs::path> all_blogs_;    
 
     basics::Persistor_blog persistor_;
+    
+    void persist_current_blog();
 };
 
 } // namespace

@@ -76,60 +76,13 @@ std::string basics::Blog_local::get_post_content(std::string timestamp)
     throw std::runtime_error(err.str());
 }
 
+
 void basics::Blog_local::add_post(std::string title, std::string author, std::string life) 
 {
     basics::Post another_post(title, author, life);
     post_index_[ another_post.get_timestamp_str() ] = another_post;    
-    
-//    persistor_.write_posts( map_values(post_index_) );
 }
 
-//void basics::Blog_local::generate(const int post_per_page, const std::string page_base_name)
-//{
-//    BlogContent content_ptr = loadBlogContent(content_file_.string().c_str());
-//    if (content_ptr == NULL) {
-//        std::stringstream err;
-//        err << "Document XML invalide";
-//        throw std::runtime_error(err.str());
-//    }
-//
-//    BlogXsl xsl_ptr = loadBlogXsl(xsl_file_.string().c_str());
-//    if (xsl_ptr == NULL) {
-//        std::stringstream err;
-//        err << "Feuille de style invalide";
-//        throw std::runtime_error(err.str());
-//    }
-//
-//    // On tri pour avoir le post le plus récent en premier
-//    NodeList *posts = getPostsOrderByDate(content_ptr);
-//
-//    // On découpe en content1.xml content2.xml ...
-//    DocList *pages = splitPostsByPage(posts, post_per_page);
-//   
-//    // On set les pagers (next, prev)
-//    setPagerAttributes(pages, page_base_name.c_str());
-//
-//    // On save comme content0.xml, content1.xml ...
-//    for (int i=0; i<pages->docNr; i++) {        
-//        std::stringstream current_page_path;
-//        if (i>0) {
-//            current_page_path << output_folder_.string() << "/" << page_base_name << i << ".html";
-//        }
-//        else {
-//            current_page_path << output_folder_.string() << "/" << page_base_name << ".html";
-//        }
-//
-//        BlogHtmlPage res = runXslOnPage(xsl_ptr, pages, i);
-//        // Gérer les foirages IO
-//        saveBlogHtmlPage(current_page_path.str().c_str(), res, xsl_ptr);
-//    }
-//    
-//    freeDocList(pages);
-//    freeBlogContent(content_ptr);
-//    freeBlogXsl(xsl_ptr);
-//    freeBlogContext();
-//}
-//
 template<class U, class T> 
 std::vector<T> basics::Blog_local::map_values( const std::map<U, T> &input_map )
 {

@@ -73,6 +73,11 @@ public:
         return blog_instance_folder_.string();
     }
 
+    inline bfs::path get_content_file() 
+    {
+        return content_file_;
+    }
+
     inline bfs::path get_blog_folder() 
     {
         return blog_instance_folder_;

@@ -3,7 +3,6 @@
   <config>
     <meta-desc>Ceci est la description de ce blog pour les moteurs de recherche</meta-desc>
     <meta-author>Vous</meta-author>
-    <!--<meta-icon>img/favicon.ico</meta-icon>-->
     
     <meta-title>Titre du blog</meta-title>
     <meta-conf-bootstrap>dist/css/bootstrap.min.css</meta-conf-bootstrap>

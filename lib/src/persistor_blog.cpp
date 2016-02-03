@@ -33,12 +33,33 @@ basics::Persistor_blog::Persistor_blog()
 
 std::string basics::Persistor_blog::nv(rapidxml::xml_node<> *parent, std::string name) 
 {
-    return parent->first_node(name.c_str())->value();
+    rapidxml::xml_node<> *node = parent->first_node(name.c_str());
+    if (!node) {        
+        std::stringstream err;
+        err << "Cannot find node: " << name;
+        throw std::runtime_error( err.str() );
+    }    
+
+    return node->value();
 }
 
-std::string basics::Persistor_blog::av(rapidxml::xml_node<> *parent, std::string name) 
+std::string basics::Persistor_blog::av(rapidxml::xml_node<> *parent, std::string node_name, std::string name) 
 {
-    return parent->first_attribute(name.c_str())->value();
+    rapidxml::xml_node<> *node = parent->first_node(node_name.c_str());
+    if (!node) {        
+        std::stringstream err;
+        err << "Cannot find node: " << node_name;
+        throw std::runtime_error( err.str() );
+    }    
+    
+    rapidxml::xml_attribute<> *attr = node->first_attribute(name.c_str());
+    if (!attr) {        
+        std::stringstream err;
+        err << "Cannot find attribute: " << name;
+        throw std::runtime_error( err.str() );
+    }    
+
+    return attr->value();
 }
 
 std::map<std::string, std::string> basics::Persistor_blog::nvs(rapidxml::xml_node<> *parent, std::string name) 
@@ -74,11 +95,11 @@ basics::Persistable_blog basics::Persistor_blog::read_blog(bfs::path content_sto
                                       nv(conf, "title"),
                                       nv(conf, "subtitle"),
                                       nv(conf, "about"),
-                                      av(conf, "about_headline"),
+                                      av(conf, "about", "line"),
                                       nvs(conf, "links"),
-                                      av(conf, "links"),
+                                      av(conf, "links", "line"),
                                       nv(conf, "philosophy"),
-                                      nv(conf, "back-to-top"),
+                                      nv(conf, "backtotop"),
                                       std::stoi(nv(conf, "post-per-page")));
     
 

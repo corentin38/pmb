@@ -48,7 +48,7 @@ private:
     std::string nv(rapidxml::xml_node<> *parent, std::string name);
     
     /** get attribute value */
-    std::string av(rapidxml::xml_node<> *parent, std::string name);
+    std::string av(rapidxml::xml_node<> *parent, std::string node_name, std::string name);
 
     /** get node values from xml "map"
      * <mymap>

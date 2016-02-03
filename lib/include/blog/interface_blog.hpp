@@ -59,6 +59,8 @@ public:
     virtual bfs::path get_blog_folder() = 0;
     virtual bfs::path get_template_file() = 0;
 
+    virtual bfs::path get_content_file() = 0;
+
     virtual basics::Configuration_blog get_config() = 0;
     
 };

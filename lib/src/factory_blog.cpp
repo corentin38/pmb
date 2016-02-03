@@ -29,7 +29,6 @@
 #include <blog_constants.hpp>
 #include <blog/persistable_blog.hpp>
 #include <utils/boost_utils.hpp>
-//#include <blog/configuration_blog.hpp>
 
 #include <iostream>
 #include <stdexcept>
@@ -65,7 +64,7 @@ basics::Factory_blog::create_local_instance(
 
     // Fetching all blog instance components
     bfs::path archive_subdir = blog_folder / const_archive_subdir;
-    bfs::path resources_subdir = resources_subdir / const_resources_subdir;
+    bfs::path resources_subdir = blog_folder / const_resources_subdir;
     
     bfs::create_directory(archive_subdir);
     bfs::create_directory(resources_subdir);    

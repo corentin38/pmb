@@ -108,6 +108,7 @@ basics::Controller_blog::add_post_to_current_blog(
 {
     if (has_current_blog()) {
         current_blog_->add_post(title, author, life);
+        persist_current_blog();
     }
     return "greetings from add_post_to_current_blog";
 }
@@ -144,5 +145,19 @@ std::string basics::Controller_blog::get_post_content(std::string &timestamp)
 
     return current_blog_->get_post_content(timestamp);
 }
+
+
+void basics::Controller_blog::persist_current_blog() 
+{
+    if (!has_current_blog()) {
+        return;
+    }
+
+    basics::Persistor_blog persistor;
+    basics::Persistable_blog blog(current_blog_->get_posts(), current_blog_->get_config());
+
+    persistor.write_blog(current_blog_->get_content_file(), blog);
+}
+
 
 
