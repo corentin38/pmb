@@ -29,6 +29,7 @@
 #include <memory>
 #include <blog/interface_blog.hpp>
 #include <boost/filesystem.hpp>
+#include <blog/persistor_blog.hpp>
 #include <vector>
 #include <set>
 
@@ -61,10 +62,7 @@ public:
             return current_blog_->get_blog_path();
         }
         return "";
-    }
-    
-//    std::string select_blog(std::string&);
-//    std::vector<std::string> get_blog_names();
+    }    
     
 private:
     basics::Simple_logger logger_;

@@ -19,6 +19,7 @@ add_library( blog
   controller_blog.cpp
   persistable_blog.cpp
   generator.cpp
+  configuration_blog.cpp
 )
 
 target_link_libraries( blog post utils ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} )

@@ -29,6 +29,7 @@
 #include <blog_constants.hpp>
 #include <blog/persistable_blog.hpp>
 #include <utils/boost_utils.hpp>
+//#include <blog/configuration_blog.hpp>
 
 #include <iostream>
 #include <stdexcept>

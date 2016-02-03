@@ -31,17 +31,17 @@ basics::Persistor_blog::Persistor_blog()
 {
 }
 
-std::string nv(rapidxml::xml_node<> *parent, std::string name) 
+std::string basics::Persistor_blog::nv(rapidxml::xml_node<> *parent, std::string name) 
 {
     return parent->first_node(name.c_str())->value();
 }
 
-std::string av(rapidxml::xml_node<> *parent, std::string name) 
+std::string basics::Persistor_blog::av(rapidxml::xml_node<> *parent, std::string name) 
 {
     return parent->first_attribute(name.c_str())->value();
 }
 
-std::map<std::string, std::string> nvs(rapidxml::xml_node<> *parent, std::string name) 
+std::map<std::string, std::string> basics::Persistor_blog::nvs(rapidxml::xml_node<> *parent, std::string name) 
 {
     std::map<std::string, std::string> key_val;
     rapidxml::xml_node<> *item;
@@ -125,10 +125,10 @@ void basics::Persistor_blog::wn(rapidxml::xml_node<> *parent,
                                 std::string attr_name,
                                 std::string attr_value)
 {
-    rapidxml::xml_node<> *new_node = parent->document()->allocate_node(rapidxml::node_element, name, value);
+    rapidxml::xml_node<> *new_node = parent->document()->allocate_node(rapidxml::node_element, name.c_str(), value.c_str());
 
     if (attr_name != "") {
-        rapidxml::xml_attribute<> *new_attr = parent->document()->allocate_attribute(attr_name, attr_value);
+        rapidxml::xml_attribute<> *new_attr = parent->document()->allocate_attribute(attr_name.c_str(), attr_value.c_str());
         new_node->append_attribute(new_attr);
     }
     
@@ -140,14 +140,21 @@ void basics::Persistor_blog::wns(rapidxml::xml_node<> *parent,
                                  std::string map_name,
                                  std::string key_name,
                                  std::string val_name,
-                                 std::map<std::string, std::string> key_val) 
+                                 std::map<std::string, std::string> key_val,
+                                 std::string attr_name,
+                                 std::string attr_value) 
 {
-    rapidxml::xml_node<> *new_map = parent->document()->allocate_node(rapidxml::node_element, map_name);
+    rapidxml::xml_node<> *new_map = parent->document()->allocate_node(rapidxml::node_element, map_name.c_str());
     parent->append_node(new_map);
+
+    if (attr_name != "") {
+        rapidxml::xml_attribute<> *new_attr = parent->document()->allocate_attribute(attr_name.c_str(), attr_value.c_str());
+        new_map->append_attribute(new_attr);
+    }
     
     for (std::map<std::string, std::string>::iterator it = key_val.begin(); it != key_val.end(); ++it) {
-        rapidxml::xml_node<> *val = parent->document()->allocate_node(rapidxml::node_element, val_name, it->second());
-        rapidxml::xml_attribute<> *key = parent->document()->allocate_attribute(key_name, it->first());
+        rapidxml::xml_node<> *val = parent->document()->allocate_node(rapidxml::node_element, val_name.c_str(), it->second.c_str());
+        rapidxml::xml_attribute<> *key = parent->document()->allocate_attribute(key_name.c_str(), it->first.c_str());
         val->append_attribute(key);
         new_map->append_node(val);
     }
@@ -178,10 +185,10 @@ void basics::Persistor_blog::write_blog(bfs::path content_storage_file, basics::
     wn(conf, "meta-title", config.meta_title_);
     wn(conf, "meta-conf-bootstrap", config.bootstrap_);
     wn(conf, "meta-conf-css", config.css_);
-    wns(conf, "nav-items", "href", "item", config.menu_)
+    wns(conf, "nav-items", "href", "item", config.menu_);
     wn(conf, "title", config.title_);
     wn(conf, "subtitle", config.subtitle_);
-    wn(conf, "about", config.about_, "line", config.about_deadline_);
+    wn(conf, "about", config.about_, "line", config.about_headline_);
     wns(conf, "links", "href", "item", config.links_, "line", config.links_headline_);
     wn(conf, "philosophy", config.philosophy_);
     wn(conf, "backtotop", config.back_to_top_);

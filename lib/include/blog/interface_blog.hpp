@@ -29,6 +29,7 @@
 #include <string>
 #include <boost/filesystem.hpp>
 #include <blog/post.hpp>
+#include <blog/configuration_blog.hpp>
 
 namespace basics {
 
@@ -52,10 +53,13 @@ public:
 //    virtual void write_content() = 0;
 //    virtual void write_save() = 0;
 
-    virtual void generate(const int post_per_page = 10, const std::string page_base_name = "index") = 0;
+//    virtual void generate(const int post_per_page = 10, const std::string page_base_name = "index") = 0;
   
     virtual std::string get_blog_path() = 0;
     virtual bfs::path get_blog_folder() = 0;
+    virtual bfs::path get_template_file() = 0;
+
+    virtual basics::Configuration_blog get_config() = 0;
     
 };
 

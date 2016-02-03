@@ -6,8 +6,8 @@
 #include <QFileDialog>
 #include <stdexcept>
 #include <QStringList>
-#include <vector>
 #include <QStringListModel>
+#include <algorithm>
 
 // TO DEL
 #include <iostream>
@@ -19,7 +19,8 @@ MainWindow::MainWindow(basics::Simple_logger logger, QWidget *parent) :
     ui(new Ui::MainWindow),
     logger_(logger),
     ctrl_blog_(logger),
-    clearing_combo_(false)
+    clearing_combo_(false),
+    blog_history_()
 {
     ui->setupUi(this);
 
@@ -82,9 +83,10 @@ void MainWindow::on_actionNew_triggered()
         delete wiz;
         return;
     }
-    
+
+    std::string new_blog_path = "";
     try {
-        std::string new_blog_path = ctrl_blog_.create_new_blog(name, blog_path, override, sample);
+        new_blog_path = ctrl_blog_.create_new_blog(name, blog_path, override, sample);
     }
     catch (const std::exception& e) {
         warning(std::string("Impossible de créer le blog !\n") + std::string(e.what()));
@@ -93,6 +95,8 @@ void MainWindow::on_actionNew_triggered()
     }
 
     update_frame();
+
+    blog_history_.push_back(new_blog_path);
     
     logger_.info("Nouveau blog créé avec succès");
     delete wiz;
@@ -122,6 +126,11 @@ void MainWindow::on_actionOpen_triggered()
         return;
     }
 
+    // Add to history if does not exist already
+    if(std::find(blog_history_.begin(), blog_history_.end(), blog_folder_path) == blog_history_.end()) {
+        blog_history_.push_back(blog_folder_path);
+    }
+    
     status("Blog chargé !");
     update_frame();
 }
@@ -165,13 +174,13 @@ void MainWindow::on_blogCB_currentIndexChanged(const QString &text)
 
     std::string blog_folder_path = text.toUtf8().constData();
 
-    if (blog_folder_path == ctrl_blog_.get_current_blog_path()) {
+    if (blog_folder_path == ctrl_blog_.get_blog_path()) {
         status("Blog déjà chargé !");
         return;
     }
     
     std::string text_str = text.toStdString();
-    ctrl_blog_.select_blog(text_str);
+    ctrl_blog_.open_blog(text_str);
 
     update_frame();
 }
@@ -210,17 +219,16 @@ void MainWindow::update_blog_combobox()
     clearing_combo_ = true;
     ui->blogCB->clear();
 
-    std::vector<std::string> blog_list = ctrl_blog_.get_blog_names();
-
-    if (blog_list.size() == 0) {
+    if (!ctrl_blog_.has_current_blog() && blog_history_.size() == 0) {
         ui->blogCB->setEnabled(false);
         clearing_combo_ = false;
+        return;
     }
 
     ui->blogCB->setEnabled(true);
-
-    std::vector<std::string>::const_iterator it = blog_list.begin();
-    std::vector<std::string>::const_iterator end = blog_list.end();
+    
+    std::vector<std::string>::const_iterator it = blog_history_.begin();
+    std::vector<std::string>::const_iterator end = blog_history_.end();
     
     QStringList fucking_qt_list;
     
@@ -230,7 +238,7 @@ void MainWindow::update_blog_combobox()
     
     ui->blogCB->addItems(fucking_qt_list);
 
-    int curr_index = ui->blogCB->findText(QString::fromStdString(ctrl_blog_.get_current_blog_path()));
+    int curr_index = ui->blogCB->findText(QString::fromStdString(ctrl_blog_.get_blog_path()));
     ui->blogCB->setCurrentIndex(curr_index);
 
     clearing_combo_ = false;

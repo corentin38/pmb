@@ -66,7 +66,7 @@ public:
 
     std::string get_post_content(std::string);
 
-    void generate(const int post_per_page = 10, const std::string page_base_name = "index");
+//    void generate(const int post_per_page = 10, const std::string page_base_name = "index");
 
     inline std::string get_blog_path() 
     {
@@ -83,6 +83,11 @@ public:
         return template_file_;
     }
 
+    inline basics::Configuration_blog get_config()
+    {
+        return configuration_;
+    }
+    
     // Utility
     template<class U, class T>
     static std::vector<T> map_values( const std::map<U, T> &input_map );

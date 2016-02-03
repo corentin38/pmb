@@ -26,6 +26,7 @@
 #include <blog/controller_blog.hpp>
 #include <blog/generator.hpp>
 #include <blog/factory_blog.hpp>
+#include <blog/persistable_blog.hpp>
 #include <iostream>
 #include <stdexcept>
 
@@ -52,11 +53,11 @@ void basics::Controller_blog::generate_current_blog()
 
     logger_.info("Début de la génération du blog");
     basics::Generator gen;
-    basics::Persistable_blog blog(current_blog_.posts(),
-                                  current_blog_.config());    
+    basics::Persistable_blog blog(current_blog_->get_posts(),
+                                  current_blog_->get_config());    
 
-    gen.templatize_the_fucker(current_blog_.get_template_file(),
-                              current_blog_.get_blog_folder(),
+    gen.templatize_the_fucker(current_blog_->get_template_file(),
+                              current_blog_->get_blog_folder(),
                               blog);
     
     logger_.info("Blog généré");

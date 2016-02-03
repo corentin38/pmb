@@ -26,8 +26,12 @@
 #ifndef GENERATOR_HPP
 #define GENERATOR_HPP
 
+#include <boost/filesystem.hpp>
+#include <blog/persistable_blog.hpp>
 
 namespace basics {
+
+namespace bfs = boost::filesystem;
 
 class Generator {
    

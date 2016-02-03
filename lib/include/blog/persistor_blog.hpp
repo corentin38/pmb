@@ -63,17 +63,19 @@ private:
 
     /** write node of name "name" and value "value" with optional attribute */
     void wn(rapidxml::xml_node<> *parent,
-                                    std::string name,
-                                    std::string value,
-                                    std::string attr_name = "",
-                                    std::string attr_value = "");
+            std::string name,
+            std::string value,
+            std::string attr_name = "",
+            std::string attr_value = "");
 
     /** write xml map of nodes */
     void wns(rapidxml::xml_node<> *parent,
-                                     std::string map_name,
-                                     std::string key_name,
-                                     std::string val_name,
-                                     std::map<std::string, std::string> key_val);
+             std::string map_name,
+             std::string key_name,
+             std::string val_name,
+             std::map<std::string, std::string> key_val,
+             std::string attr_name = "",
+             std::string attr_value = "");
 };
 
 } // namespace

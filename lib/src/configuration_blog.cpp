@@ -23,7 +23,7 @@
  * @file configuration_blog.cpp
  */
 
-#include "configuration_blog.hpp"
+#include "blog/configuration_blog.hpp"
 
 basics::Configuration_blog::Configuration_blog(std::string meta_desc,
                                                std::string meta_author,

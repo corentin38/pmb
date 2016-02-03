@@ -26,6 +26,8 @@
 #ifndef CONFIGURATION_BLOG_HPP
 #define CONFIGURATION_BLOG_HPP
 
+#include <string>
+#include <map>
 
 namespace basics {
 

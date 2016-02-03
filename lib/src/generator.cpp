@@ -23,8 +23,7 @@
  * @file generator.cpp
  */
 
-#include "generator.hpp"
-
+#include <blog/generator.hpp>
 
 basics::Generator::Generator()
 {

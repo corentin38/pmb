@@ -23,9 +23,9 @@
  * @file persistable_blog.cpp
  */
 
-#include <persistable_blog.hpp>
+#include <blog/persistable_blog.hpp>
 
-basics::Persistable_blog::persistable_blog(std::vector<basics::Post> posts, basics::Configuration_blog config) :
+basics::Persistable_blog::Persistable_blog(std::vector<basics::Post> posts, basics::Configuration_blog config) :
    posts_(posts), config_(config)
 {
 }

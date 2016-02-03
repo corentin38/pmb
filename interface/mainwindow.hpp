@@ -5,6 +5,7 @@
 #include <blog/controller_blog.hpp>
 #include <QString>
 #include <QModelIndex>
+#include <vector>
 
 #ifndef Q_MOC_RUN
 #include "utils/simple_logger.hpp"
@@ -41,6 +42,8 @@ private:
     basics::Controller_blog ctrl_blog_;
 
     bool clearing_combo_;
+    std::vector<std::string> blog_history_;
+    
 
 //    void clear_fields();
     void update_blog_combobox();
