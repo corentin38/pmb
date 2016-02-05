@@ -1,5 +1,6 @@
 include_directories( 
   ${LIBXML2_INCLUDE_DIR}
+  ${CMAKE_SOURCE_DIR}/libflate
   SYSTEM ${Boost_INCLUDE_DIRS}
   ${CMAKE_SOURCE_DIR}/libc/include 
   ${CMAKE_SOURCE_DIR}/lib/include
@@ -12,6 +13,9 @@ add_definitions( -Weffc++ -std=c++11 )
 add_library( utils boost_utils.cpp simple_logger.cpp )
 target_link_libraries( utils ${Boost_LIBRARIES} )
 
+find_library( FLATE libflate.a PATHS ${CMAKE_SOURCE_DIR}/libflate )
+MESSAGE( ${CMAKE_SOURCE_DIR}/libflate )
+
 add_library( blog
   factory_blog.cpp
   blog_local.cpp
@@ -22,4 +26,10 @@ add_library( blog
   configuration_blog.cpp
 )
 
-target_link_libraries( blog post utils ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} )
+target_link_libraries( blog 
+  post
+  utils
+  ${CMAKE_THREAD_LIBS_INIT}
+  ${Boost_LIBRARIES}
+  ${FLATE}
+)

@@ -23,9 +23,15 @@
  * @file generator.cpp
  */
 
+#include <iostream>
+#include <fstream>
 #include <blog/generator.hpp>
+extern "C" {    
+#include <flate.h>
+}
 
-basics::Generator::Generator()
+
+basics::Generator::Generator() : buff_()
 {
 }
 
@@ -33,6 +39,40 @@ void basics::Generator::templatize_the_fucker(bfs::path template_path,
                                               bfs::path destination_path,
                                               basics::Persistable_blog blog)
 {
-    // XXX: not implemented
+    Flate *f = NULL;
+    flateSetFile(&f, fu( template_path.string() ));
+
+    // Config
+    flateSetVar(f, fu("title"), fu("Ceci est mon titre !!!"));
+    
+    // Posts
+    for (int i=0; i<3; i++) {
+        flateSetVar(f, fu("post-title"), fu("Ceci est le titre #" + i));
+        flateDumpTableLine(f, fu("posts"));
+    }
+
+    std::string blabla(flatePage(f));
+    
+    std::ofstream page("index.html");
+    page << blabla;
+    page.close();
+    
+    flateFreeMem(f);
 }
 
+char* basics::Generator::fu(std::string in) 
+{
+    char* another = new char [in.size() + 1];
+    strcpy(another, in.c_str());
+    buff_.push_back(another);
+    return another;
+}
+
+void basics::Generator::clear() 
+{
+    for (std::vector<char*>::iterator it = buff_.begin(); it != buff_.end(); ++it) {
+        free(*it);
+    }
+}
+
+    

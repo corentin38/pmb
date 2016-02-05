@@ -28,6 +28,7 @@
 
 #include <boost/filesystem.hpp>
 #include <blog/persistable_blog.hpp>
+#include <vector>
 
 namespace basics {
 
@@ -41,7 +42,13 @@ public:
     void templatize_the_fucker(bfs::path template_path, 
                                bfs::path destination_path,
                                basics::Persistable_blog blog);
-   
+
+private:
+    std::vector<char*> buff_;
+
+    char* fu(std::string in);
+    void clear();    
+
 };
 
 } // namespace
