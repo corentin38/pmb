@@ -30,6 +30,10 @@
 #include <blog/persistable_blog.hpp>
 #include <vector>
 
+extern "C" {    
+#include <flate.h>
+}
+
 namespace basics {
 
 namespace bfs = boost::filesystem;
@@ -45,6 +49,12 @@ public:
 
 private:
     std::vector<char*> buff_;
+    Flate *f_ptr_;
+    
+    void init(bfs::path);
+    void set_variable(std::string, std::string);
+    void feed_table(std::string);
+    void exec(bfs::path, std::string);
 
     char* fu(std::string in);
     void clear();    

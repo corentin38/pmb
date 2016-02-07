@@ -26,10 +26,7 @@
 #include <iostream>
 #include <fstream>
 #include <blog/generator.hpp>
-extern "C" {    
-#include <flate.h>
-}
-
+#include <string>
 
 basics::Generator::Generator() : buff_()
 {
@@ -39,26 +36,48 @@ void basics::Generator::templatize_the_fucker(bfs::path template_path,
                                               bfs::path destination_path,
                                               basics::Persistable_blog blog)
 {
-    Flate *f = NULL;
-    flateSetFile(&f, fu( template_path.string() ));
-
+    init(template_path);
+    
     // Config
-    flateSetVar(f, fu("title"), fu("Ceci est mon titre !!!"));
+    set_variable("title", "Ceci est mon titre !!!");
     
     // Posts
     for (int i=0; i<3; i++) {
-        flateSetVar(f, fu("post-title"), fu("Ceci est le titre #" + i));
-        flateDumpTableLine(f, fu("posts"));
+        std::string titreline = "Ceci est mon titre #" + i;
+        set_variable("post-title", titreline);
+        feed_table("posts");
     }
 
-    std::string blabla(flatePage(f));
-    
-    std::ofstream page("index.html");
-    page << blabla;
-    page.close();
-    
-    flateFreeMem(f);
+    exec(destination_path, "index.html");    
+    clear();
 }
+
+void basics::Generator::init(bfs::path template_path) 
+{
+    f_ptr_ = NULL;
+    flateSetFile(&f_ptr_, fu(template_path.string()));
+}
+
+void basics::Generator::set_variable(std::string name, std::string value)
+{
+    flateSetVar(f_ptr_, fu(name), fu(value));
+}
+
+void basics::Generator::feed_table(std::string name) 
+{
+    flateDumpTableLine(f_ptr_, fu(name));
+}
+
+void basics::Generator::exec(bfs::path folder, std::string name) 
+{
+    bfs::path res = folder / bfs::path(name);
+    std::string content(flatePage(f_ptr_));
+    std::ofstream page(res.string());
+    page << content;
+    page.close();
+}
+
+    
 
 char* basics::Generator::fu(std::string in) 
 {
@@ -70,8 +89,9 @@ char* basics::Generator::fu(std::string in)
 
 void basics::Generator::clear() 
 {
+    flateFreeMem(f_ptr_);
     for (std::vector<char*>::iterator it = buff_.begin(); it != buff_.end(); ++it) {
-        free(*it);
+        delete[] *it;
     }
 }
 
