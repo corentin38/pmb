@@ -28,7 +28,7 @@
 #include <blog/generator.hpp>
 #include <string>
 
-basics::Generator::Generator() : buff_()
+basics::Generator::Generator() : buff_(), f_ptr_(NULL)
 {
 }
 
@@ -42,7 +42,29 @@ void basics::Generator::templatize_the_fucker(bfs::path template_path,
     basics::Configuration_blog config = blog.config();
     std::vector<basics::Post> posts = blog.posts();
 
-    templatize_page(destination_path, "index.html", config, posts, "#", "#");
+    int post_per_page = config.post_per_page_;
+    int posts_number = posts.size();
+    
+    int page_count = 0;
+
+    while (posts_left > 0) {
+        std::vector<basics::Posts>::iterator beg = posts.begin() + page_count * post_per_page;
+        
+        if (page_count * post_per_page + post_per_page > posts_number) {
+            std::vector<basics::Posts>::iterator end = posts.end();
+        } else {
+            std::vector<basics::Posts>::iterator end = beg + post_per_page;
+        }
+        
+        std::vector<basics::Post> page(beg, end);
+        templatize_page(destination_path, "index.html", config, page, "#", "#");
+        
+        
+        page_count++;
+
+    }
+    
+
     
     destroy();
 }
@@ -68,11 +90,11 @@ void basics::Generator::templatize_page(bfs::path destination_path, std::string 
     
     // Posts
     for (std::vector<basics::Post>::iterator it = posts.begin(); it != posts.end(); ++it) {
-        set_variable("post-title", "blabla");
-        set_variable("post-date", "blabla");
-        set_variable("post-author-link", "blabla");
-        set_variable("post-author", "blabla");
-        set_variable("post-life", "blabla");
+        set_variable("post-title", it->get_title());
+        set_variable("post-date", it->get_timestamp_str());
+        set_variable("post-author-link", "#");
+        set_variable("post-author", it->get_author());
+        set_variable("post-life", it->get_life());
         feed_table("posts");
     }
 

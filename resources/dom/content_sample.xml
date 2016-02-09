@@ -5,8 +5,8 @@
     <meta-author>Vous</meta-author>
     
     <meta-title>Titre du blog</meta-title>
-    <meta-conf-bootstrap>dist/css/bootstrap.min.css</meta-conf-bootstrap>
-    <meta-conf-css>blog.css</meta-conf-css>
+    <meta-conf-bootstrap>resources/dist/css/bootstrap.min.css</meta-conf-bootstrap>
+    <meta-conf-css>resources/blog.css</meta-conf-css>
     
     <nav-items>
       <!-- Placer à la place du # le lien vers la page "à propos" -->
