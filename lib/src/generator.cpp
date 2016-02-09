@@ -37,20 +37,67 @@ void basics::Generator::templatize_the_fucker(bfs::path template_path,
                                               basics::Persistable_blog blog)
 {
     init(template_path);
+
+
+    basics::Configuration_blog config = blog.config();
+    std::vector<basics::Post> posts = blog.posts();
+
+    templatize_page(destination_path, "index.html", config, posts, "#", "#");
     
+    destroy();
+}
+
+void basics::Generator::templatize_page(bfs::path destination_path, std::string pagename, basics::Configuration_blog &config, std::vector<basics::Post> &posts, std::string prev_page_link, std::string next_page_link) 
+{
     // Config
-    set_variable("title", "Ceci est mon titre !!!");
+    set_variable("meta-desc", config.meta_desc_);
+    set_variable("meta-author", config.meta_author_);
+    set_variable("meta-title", config.meta_title_);
+    set_variable("meta-conf-bootstrap", config.bootstrap_);
+    set_variable("meta-conf-css", config.css_);
+
+    std::map<std::string, std::string> menu = config.menu_;
+    for (std::map<std::string, std::string>::iterator it = menu.begin(); it != menu.end(); ++it) {
+        set_variable("nav-href", it->first);
+        set_variable("nav-item", it->second);
+        feed_table("nav-items");
+    }
+    
+    set_variable("title", config.title_);
+    set_variable("subtitle", config.subtitle_);
     
     // Posts
-    for (int i=0; i<3; i++) {
-        std::string titreline = "Ceci est mon titre #" + i;
-        set_variable("post-title", titreline);
+    for (std::vector<basics::Post>::iterator it = posts.begin(); it != posts.end(); ++it) {
+        set_variable("post-title", "blabla");
+        set_variable("post-date", "blabla");
+        set_variable("post-author-link", "blabla");
+        set_variable("post-author", "blabla");
+        set_variable("post-life", "blabla");
         feed_table("posts");
     }
 
-    exec(destination_path, "index.html");    
-    clear();
+    set_variable("prev-page-link", prev_page_link);
+    set_variable("next-page-link", next_page_link);
+
+    set_variable("about", config.about_);
+    set_variable("about-line", config.about_headline_);
+    set_variable("links-line", config.links_headline_);
+
+    
+    std::map<std::string, std::string> links = config.links_;
+    for (std::map<std::string, std::string>::iterator it = links.begin(); it != links.end(); ++it) {
+        set_variable("link-href", it->first);
+        set_variable("link-item", it->second);
+        feed_table("links");
+    }
+
+    set_variable("philosophy", config.philosophy_);
+    set_variable("backtotop", config.back_to_top_);
+
+    exec(destination_path, pagename);    
+    clear();    
 }
+
 
 void basics::Generator::init(bfs::path template_path) 
 {
@@ -89,10 +136,13 @@ char* basics::Generator::fu(std::string in)
 
 void basics::Generator::clear() 
 {
-    flateFreeMem(f_ptr_);
     for (std::vector<char*>::iterator it = buff_.begin(); it != buff_.end(); ++it) {
         delete[] *it;
     }
 }
 
-    
+void basics::Generator::destroy() 
+{
+    flateFreeMem(f_ptr_);
+}
+

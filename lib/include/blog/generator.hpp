@@ -28,7 +28,10 @@
 
 #include <boost/filesystem.hpp>
 #include <blog/persistable_blog.hpp>
+#include <blog/configuration_blog.hpp>
+#include <blog/post.hpp>
 #include <vector>
+#include <string>
 
 extern "C" {    
 #include <flate.h>
@@ -50,6 +53,8 @@ public:
 private:
     std::vector<char*> buff_;
     Flate *f_ptr_;
+
+    void templatize_page(bfs::path, std::string, basics::Configuration_blog&, std::vector<basics::Post>&, std::string, std::string);
     
     void init(bfs::path);
     void set_variable(std::string, std::string);
@@ -58,6 +63,7 @@ private:
 
     char* fu(std::string in);
     void clear();    
+    void destroy();    
 
 };
 
