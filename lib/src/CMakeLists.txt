@@ -1,8 +1,6 @@
 include_directories( 
-  ${LIBXML2_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}/libflate
   SYSTEM ${Boost_INCLUDE_DIRS}
-  ${CMAKE_SOURCE_DIR}/libc/include 
   ${CMAKE_SOURCE_DIR}/lib/include
   ${CMAKE_SOURCE_DIR}/lib/gen
 )
@@ -27,7 +25,6 @@ add_library( blog
 )
 
 target_link_libraries( blog 
-  post
   utils
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}

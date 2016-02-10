@@ -35,10 +35,6 @@
 #include <blog/persistor_blog.hpp>
 #include <blog/configuration_blog.hpp>
 
-extern "C" {    
-#include "post/post.h"
-}
-
 namespace basics {
 
 namespace bfs = boost::filesystem;

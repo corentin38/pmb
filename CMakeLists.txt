@@ -29,7 +29,6 @@ find_package( Boost COMPONENTS system filesystem log log_setup thread date_time 
 
 qt5_wrap_ui( QT_UI_FILES interface/mainwindow.ui interface/blogwizard.ui interface/posteditor.ui )
 
-add_subdirectory( libc )
 add_subdirectory( lib )
 
 add_executable(
@@ -44,8 +43,6 @@ add_executable(
 
 include_directories(
   SYSTEM ${Boost_INCLUDE_DIR}
-  ${LIBXML2_INCLUDE_DIR}
-  ${LIBXSLT_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}/lib/include
 )
 
