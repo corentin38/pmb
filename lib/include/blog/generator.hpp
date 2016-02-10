@@ -54,7 +54,7 @@ private:
     std::vector<char*> buff_;
     Flate *f_ptr_;
 
-    void templatize_page(bfs::path, std::string, basics::Configuration_blog&, std::vector<basics::Post>&, std::string, std::string);
+    void templatize_page(bfs::path, bfs::path, std::string, basics::Configuration_blog&, std::vector<basics::Post>&, std::string, std::string);
     
     void init(bfs::path);
     void set_variable(std::string, std::string);

@@ -71,7 +71,7 @@ public:
         return life_;
     }
     
-    inline bdt::ptime get_timestamp() 
+    inline bdt::ptime get_timestamp() const
     {
         return timestamp_;
     }
@@ -87,6 +87,11 @@ public:
         stream.imbue(loc);
         stream << timestamp_;
         return stream.str();
+    }
+
+    bool operator <(const Post &other) const 
+    {
+        return timestamp_ > other.get_timestamp();
     }
     
    

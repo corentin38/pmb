@@ -27,6 +27,7 @@
 #include <fstream>
 #include <blog/generator.hpp>
 #include <string>
+#include <sstream>
 
 basics::Generator::Generator() : buff_(), f_ptr_(NULL)
 {
@@ -36,41 +37,70 @@ void basics::Generator::templatize_the_fucker(bfs::path template_path,
                                               bfs::path destination_path,
                                               basics::Persistable_blog blog)
 {
-    init(template_path);
 
 
     basics::Configuration_blog config = blog.config();
     std::vector<basics::Post> posts = blog.posts();
 
+    std::sort(posts.begin(), posts.end());
+    
     int post_per_page = config.post_per_page_;
     int posts_number = posts.size();
-    
+
+    bool has_next = true;
     int page_count = 0;
 
-    while (posts_left > 0) {
-        std::vector<basics::Posts>::iterator beg = posts.begin() + page_count * post_per_page;
+    while (has_next) {
+
+        // Make the post subset
+        std::vector<basics::Post>::iterator beg = posts.begin() + page_count * post_per_page;
+        std::vector<basics::Post>::iterator end;
         
-        if (page_count * post_per_page + post_per_page > posts_number) {
-            std::vector<basics::Posts>::iterator end = posts.end();
+        if (page_count * post_per_page + post_per_page >= posts_number) {
+            end = posts.end();
+            has_next = false;
         } else {
-            std::vector<basics::Posts>::iterator end = beg + post_per_page;
+            end = beg + post_per_page;
+        }
+
+        // Make the page names
+        std::stringstream page_name, prev, next;
+        if (page_count == 0) {
+            page_name << "index.html";
+
+            prev << "#";
+            if (has_next) {
+                next << "page" << 2 << ".html";
+            } else {
+                next << "#";
+            }
+        } else {
+            page_name << "page" << (page_count + 1) << ".html";
+
+            if (page_count == 1) {
+                prev << "index.html";
+            } else {
+                prev << "page" << page_count << ".html";
+            }
+            if (has_next) {
+                next << "page" << page_count + 2 << ".html";
+            } else {
+                next << "#";
+            }
         }
         
         std::vector<basics::Post> page(beg, end);
-        templatize_page(destination_path, "index.html", config, page, "#", "#");
-        
+        templatize_page(template_path, destination_path, page_name.str(), config, page, next.str(), prev.str());
         
         page_count++;
-
     }
     
-
-    
-    destroy();
 }
 
-void basics::Generator::templatize_page(bfs::path destination_path, std::string pagename, basics::Configuration_blog &config, std::vector<basics::Post> &posts, std::string prev_page_link, std::string next_page_link) 
+void basics::Generator::templatize_page(bfs::path tpl, bfs::path destination_path, std::string pagename, basics::Configuration_blog &config, std::vector<basics::Post> &posts, std::string prev_page_link, std::string next_page_link) 
 {
+    init(tpl);
+
     // Config
     set_variable("meta-desc", config.meta_desc_);
     set_variable("meta-author", config.meta_author_);
@@ -118,6 +148,7 @@ void basics::Generator::templatize_page(bfs::path destination_path, std::string 
 
     exec(destination_path, pagename);    
     clear();    
+    destroy();
 }
 
 
@@ -161,6 +192,7 @@ void basics::Generator::clear()
     for (std::vector<char*>::iterator it = buff_.begin(); it != buff_.end(); ++it) {
         delete[] *it;
     }
+    buff_.clear();
 }
 
 void basics::Generator::destroy() 
