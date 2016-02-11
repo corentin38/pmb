@@ -3,11 +3,11 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 project( pmb )
 
 ## MAKE SURE THIS POINTS TO PROPER RESOURCE FILES ################
-set( TEMPLATE_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/page.tpl )
-set( CONTENT_SAMPLE_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/content_sample.xml )
-set( CONTENT_EMPTY_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/content_empty.xml )
-set( BOOTSTRAP_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/dist )
-set( CSS_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dom/blog.css )
+set( TEMPLATE_RESOURCE ${CMAKE_SOURCE_DIR}/resources/page.tpl )
+set( CONTENT_SAMPLE_RESOURCE ${CMAKE_SOURCE_DIR}/resources/content_sample.xml )
+set( CONTENT_EMPTY_RESOURCE ${CMAKE_SOURCE_DIR}/resources/content_empty.xml )
+set( BOOTSTRAP_RESOURCE ${CMAKE_SOURCE_DIR}/resources/dist )
+set( CSS_RESOURCE ${CMAKE_SOURCE_DIR}/resources/blog.css )
 ##################################################################
 
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
@@ -25,7 +25,7 @@ add_definitions( -Wall -Wextra -std=c++11 )
 ADD_DEFINITIONS( -DBOOST_LOG_DYN_LINK )
 
 find_package( Qt5 REQUIRED Widgets )
-find_package( Boost COMPONENTS system filesystem log log_setup thread date_time REQUIRED )
+find_package( Boost COMPONENTS system filesystem log log_setup thread date_time regex REQUIRED )
 
 qt5_wrap_ui( QT_UI_FILES interface/mainwindow.ui interface/blogwizard.ui interface/posteditor.ui )
 

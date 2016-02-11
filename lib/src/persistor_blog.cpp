@@ -26,6 +26,7 @@
 #include <blog/persistor_blog.hpp>
 #include <rapidxml/rapidxml_utils.hpp>
 #include <rapidxml/rapidxml_print.hpp>
+#include <utils/boost_utils.hpp>
 
 basics::Persistor_blog::Persistor_blog()
 {
@@ -118,7 +119,7 @@ basics::Persistable_blog basics::Persistor_blog::read_blog(bfs::path content_sto
         
         // mylife child node
         rapidxml::xml_node<> *life_node = post->first_node("mylife");
-        std::string life = life_node->value();
+        std::string life = basics::unescape_string(life_node->value());
 
         // Creating a new Post object from all infos
         basics::Post another_post(title, author, life, timestamp_str);
@@ -232,7 +233,9 @@ void basics::Persistor_blog::write_blog(bfs::path content_storage_file, basics::
         char *timestamp_str = content.allocate_string(it->get_timestamp_str().c_str());
         char *author = content.allocate_string(it->get_author().c_str());
         char *title = content.allocate_string(it->get_title().c_str());
-        char *life = content.allocate_string(it->get_life().c_str());
+        
+        std::string escaped_life = basics::escape_string(it->get_life());
+        char *life = content.allocate_string(escaped_life.c_str());
 
         // Building new post node
         rapidxml::xml_node<> *another_post = content.allocate_node(rapidxml::node_element, "post");

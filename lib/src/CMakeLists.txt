@@ -1,5 +1,5 @@
 include_directories( 
-  ${CMAKE_SOURCE_DIR}/libflate
+  ${CMAKE_SOURCE_DIR}/lib/bin/flate
   SYSTEM ${Boost_INCLUDE_DIRS}
   ${CMAKE_SOURCE_DIR}/lib/include
   ${CMAKE_SOURCE_DIR}/lib/gen
@@ -8,12 +8,25 @@ include_directories(
 #add_definitions( -Werror -Weffc++ -std=c++11 )
 add_definitions( -Weffc++ -std=c++11 )
 
-add_library( utils boost_utils.cpp simple_logger.cpp )
+find_library( FLATE libflate.a PATHS ${CMAKE_SOURCE_DIR}/lib/bin/flate )
+
+# Utils library (perso)
+add_library( utils
+  boost_utils.cpp
+  simple_logger.cpp
+)
+
 target_link_libraries( utils ${Boost_LIBRARIES} )
 
-find_library( FLATE libflate.a PATHS ${CMAKE_SOURCE_DIR}/libflate )
-MESSAGE( ${CMAKE_SOURCE_DIR}/libflate )
+# CPP Markdown (stolen)
+add_library(cppmarkdown
+  markdown.cpp
+  markdown-tokens.cpp
+)
+  
+target_link_libraries(cppmarkdown PUBLIC ${Boost_LIBRARIES})
 
+# BLOG main library
 add_library( blog
   factory_blog.cpp
   blog_local.cpp
@@ -26,7 +39,9 @@ add_library( blog
 
 target_link_libraries( blog 
   utils
+  cppmarkdown
   ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${FLATE}
 )
+

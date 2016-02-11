@@ -28,6 +28,7 @@
 #include <blog/generator.hpp>
 #include <string>
 #include <sstream>
+#include <cpp-markdown/markdown.h>
 
 basics::Generator::Generator() : buff_(), f_ptr_(NULL)
 {
@@ -124,7 +125,15 @@ void basics::Generator::templatize_page(bfs::path tpl, bfs::path destination_pat
         set_variable("post-date", it->get_timestamp_str());
         set_variable("post-author-link", "#");
         set_variable("post-author", it->get_author());
-        set_variable("post-life", it->get_life());
+
+        markdown::Document doc;
+        doc.read(it->get_life());
+        
+        std::stringstream output;
+        doc.write(output);
+        
+        
+        set_variable("post-life", output.str());
         feed_table("posts");
     }
 
