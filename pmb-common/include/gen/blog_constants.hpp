@@ -34,27 +34,27 @@ namespace basics {
 
 std::string getTemplateResource() 
 {
-    return "/home/corentin/work/perso/git/pmb/resources/page.tpl";
+    return "/home/corentin/work/projects/basics/pmb/pmb-common/resources/page.tpl";
 }
 
 std::string getContentSampleResource() 
 {
-    return "/home/corentin/work/perso/git/pmb/resources/content_sample.xml";
+    return "/home/corentin/work/projects/basics/pmb/pmb-common/resources/content_sample.xml";
 }
 
 std::string getContentEmptyResource() 
 {
-    return "/home/corentin/work/perso/git/pmb/resources/content_empty.xml";
+    return "/home/corentin/work/projects/basics/pmb/pmb-common/resources/content_empty.xml";
 }
 
 std::string getBootstrapResource() 
 {
-    return "/home/corentin/work/perso/git/pmb/resources/dist";
+    return "/home/corentin/work/projects/basics/pmb/pmb-common/resources/dist";
 }
 
 std::string getCssResource() 
 {
-    return "/home/corentin/work/perso/git/pmb/resources/blog.css";
+    return "/home/corentin/work/projects/basics/pmb/pmb-common/resources/blog.css";
 }
 
 

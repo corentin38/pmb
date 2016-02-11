@@ -1,14 +1,13 @@
 include_directories( 
-  ${CMAKE_SOURCE_DIR}/lib/bin/flate
+  ${CMAKE_SOURCE_DIR}/lib/flate
   SYSTEM ${Boost_INCLUDE_DIRS}
-  ${CMAKE_SOURCE_DIR}/lib/include
-  ${CMAKE_SOURCE_DIR}/lib/gen
+  ${CMAKE_SOURCE_DIR}/include
 )
 
 #add_definitions( -Werror -Weffc++ -std=c++11 )
 add_definitions( -Weffc++ -std=c++11 )
 
-find_library( FLATE libflate.a PATHS ${CMAKE_SOURCE_DIR}/lib/bin/flate )
+find_library( FLATE libflate.a PATHS ${CMAKE_SOURCE_DIR}/lib/flate )
 
 # Utils library (perso)
 add_library( utils
@@ -16,6 +15,7 @@ add_library( utils
   simple_logger.cpp
 )
 
+SET_TARGET_PROPERTIES(utils PROPERTIES COMPILE_FLAGS "-fPIC")
 target_link_libraries( utils ${Boost_LIBRARIES} )
 
 # CPP Markdown (stolen)
@@ -24,10 +24,11 @@ add_library(cppmarkdown
   markdown-tokens.cpp
 )
   
+SET_TARGET_PROPERTIES(cppmarkdown PROPERTIES COMPILE_FLAGS "-fPIC")
 target_link_libraries(cppmarkdown PUBLIC ${Boost_LIBRARIES})
 
-# BLOG main library
-add_library( blog
+# pmb-common library
+add_library( ${PROJECT_NAME} SHARED
   factory_blog.cpp
   blog_local.cpp
   persistor_blog.cpp
@@ -37,10 +38,10 @@ add_library( blog
   configuration_blog.cpp
 )
 
-target_link_libraries( blog 
+SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-fPIC")
+target_link_libraries( ${PROJECT_NAME} 
   utils
   cppmarkdown
-  ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES}
   ${FLATE}
 )

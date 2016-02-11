@@ -26,7 +26,7 @@
 #include <blog/factory_blog.hpp>
 #include <blog/interface_blog.hpp>
 #include <blog/blog_local.hpp>
-#include <blog_constants.hpp>
+#include <gen/blog_constants.hpp>
 #include <blog/persistable_blog.hpp>
 #include <utils/boost_utils.hpp>
 
