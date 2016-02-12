@@ -2,6 +2,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 project( pmb-gui )
 
 set( PMB_COMMON /home/corentin/.local/pmb )
+message( "PMB_COMMON set to: " ${PMB_COMMON} )
 
 #add_definitions( -Wall -Wextra -Werror -Weffc++ -std=c++11 )
 #add_definitions( -Wall -Wextra -Weffc++ -std=c++11 )

@@ -1,6 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 project( pmb-common )
 
+message("Install prefix provided: " ${CMAKE_INSTALL_PREFIX})
+
 ## MAKE SURE THIS POINTS TO PROPER RESOURCE FILES ################
 set( RESOURCES ${CMAKE_INSTALL_PREFIX}/share/pmb )
 

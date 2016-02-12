@@ -1,6 +1,6 @@
 *~
 *.o
-build*
+build-pmb*
 *.kdev4
 doc
 pmb-common/include/gen/*
