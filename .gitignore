@@ -3,5 +3,5 @@
 build*
 *.kdev4
 doc
-lib/gen/blog_constants.hpp
+pmb-common/include/gen/*
 PMB.*
