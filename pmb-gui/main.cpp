@@ -1,4 +1,4 @@
-#include "interface/mainwindow.hpp"
+#include "mainwindow.hpp"
 #include <QApplication>
 
 #ifndef Q_MOC_RUN
