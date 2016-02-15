@@ -156,7 +156,7 @@ void basics::Controller_blog::persist_current_blog()
 // Deprecated --------------------------------------------------
 std::string basics::Controller_blog::create_new_blog(std::string &blog_name, std::string &blog_parent_path, bool override, bool sample)
 {
-    return create_new_blog(blog_name, blog_parent_path, override, sample);
+    return create_blog(blog_name, blog_parent_path, override, sample);
 }
 
 std::string basics::Controller_blog::get_post_content(std::string &timestamp)

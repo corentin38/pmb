@@ -6,3 +6,4 @@ doc
 pmb-common/include/gen/*
 PMB.*
 *.user
+pmb-launch
