@@ -34,6 +34,7 @@ private slots:
     void on_postList_clicked(const QModelIndex &);
     
     void on_addPostButton_clicked();
+    void on_editButton_clicked();
     void on_remPostButton_clicked();
 
 private:

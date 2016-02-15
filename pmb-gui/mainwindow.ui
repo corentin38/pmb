@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
-    <height>501</height>
+    <width>760</width>
+    <height>584</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -62,14 +62,42 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
+      <property name="opaqueResize">
+       <bool>false</bool>
+      </property>
       <property name="handleWidth">
-       <number>3</number>
+       <number>6</number>
       </property>
       <property name="childrenCollapsible">
        <bool>true</bool>
       </property>
-      <widget class="QTextBrowser" name="postDisplay"/>
+      <widget class="QTextBrowser" name="postDisplay">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+         <horstretch>200</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
       <widget class="QWidget" name="widget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <property name="leftMargin">
          <number>0</number>
@@ -109,6 +137,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="editButton">
+            <property name="text">
+             <string>Éditer</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="addPostButton">
             <property name="text">
              <string>Ajouter</string>
@@ -141,8 +176,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>550</width>
-     <height>20</height>
+     <width>760</width>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

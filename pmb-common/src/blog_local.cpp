@@ -68,19 +68,42 @@ std::vector<std::string> basics::Blog_local::get_post_ids()
 
 std::string basics::Blog_local::get_post_content(std::string timestamp) 
 {
+    return get_post(timestamp).get_life();
+}
+
+basics::Post basics::Blog_local::get_post(std::string& timestamp) 
+{
     std::map<std::string, basics::Post>::iterator exists = post_index_.find(timestamp);
-    if (exists != post_index_.end()) return exists->second.get_life();
+    if (exists != post_index_.end()) return exists->second;
 
     std::stringstream err;
     err << "Pas de post avec un id = " << timestamp;
     throw std::runtime_error(err.str());
 }
 
-
 void basics::Blog_local::add_post(std::string title, std::string author, std::string life) 
 {
     basics::Post another_post(title, author, life);
     post_index_[ another_post.get_timestamp_str() ] = another_post;    
+}
+
+void basics::Blog_local::edit_post(std::string& post_id,
+                                   std::string& title,
+                                   std::string& author,
+                                   std::string& life)
+{
+    basics::Post update = get_post(post_id);
+    update.set_title(title);
+    update.set_author(author);
+    update.set_life(life);
+    update.add_edition();
+    
+    post_index_[post_id] = update;
+}
+
+void basics::Blog_local::remove_post(std::string& post_id)
+{
+    post_index_.erase(post_id);
 }
 
 template<class U, class T> 

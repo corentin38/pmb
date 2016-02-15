@@ -57,12 +57,13 @@ public:
 
     std::vector<basics::Post> get_posts();
     std::vector<std::string> get_post_ids();
-
-    void add_post(std::string, std::string, std::string);
-
     std::string get_post_content(std::string);
 
-//    void generate(const int post_per_page = 10, const std::string page_base_name = "index");
+    basics::Post get_post(std::string&);
+    
+    void add_post(std::string, std::string, std::string);
+    void edit_post(std::string&, std::string&, std::string&, std::string&);
+    void remove_post(std::string&);
 
     inline std::string get_blog_path() 
     {

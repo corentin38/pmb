@@ -152,20 +152,58 @@ void MainWindow::on_addPostButton_clicked()
         std::string new_blog_path = ctrl_blog_.add_post_to_current_blog(title, author, life);
     }
     catch (const std::exception& e) {
-        warning(std::string("Impossible de créer le blog !\n") + std::string(e.what()));
+        warning(std::string("Impossible de créer le post !\n") + std::string(e.what()));
         delete editor;
         return;
     }
     
     update_frame();
     
-    logger_.info("Nouveau blog créé avec succès");
+    logger_.info("Nouveau post créé avec succès");
     delete editor;
 }
 
 void MainWindow::on_remPostButton_clicked()
 {
+    std::string post_id = ui->postList->currentIndex().data().toString().toStdString();
+
+    ctrl_blog_.remove_post(post_id);
     update_frame();
+}
+
+void MainWindow::on_editButton_clicked()
+{
+    std::string post_id = ui->postList->currentIndex().data().toString().toStdString();
+
+    basics::Post cur = ctrl_blog_.post(post_id);
+    QString orig_title = QString::fromStdString(cur.get_title());
+    QString orig_author = QString::fromStdString(cur.get_author());
+    QString orig_life = QString::fromStdString(cur.get_life());
+
+    PostEditor *editor = new PostEditor(orig_title, orig_author, orig_life, this);
+    int code = editor->exec();
+    if (code == QDialog::Rejected) {
+        delete editor;
+        return;
+    }
+
+    std::string title = editor->get_post_title();
+    std::string author = editor->get_post_author();
+    std::string life = editor->get_post_life();
+
+    try {
+        ctrl_blog_.edit_post(post_id, title, author, life);
+    }
+    catch (const std::exception& e) {
+        warning(std::string("Impossible de mettre à jour le post :\n") + std::string(e.what()));
+        delete editor;
+        return;
+    }
+
+    update_frame();
+
+    logger_.info("Post édité avec succès");
+    delete editor;
 }
 
 void MainWindow::on_blogCB_currentIndexChanged(const QString &text) 

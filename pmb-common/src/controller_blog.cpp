@@ -36,7 +36,8 @@ basics::Controller_blog::Controller_blog(basics::Simple_logger logger)
 {
 }
 
-bool basics::Controller_blog::has_current_blog() const
+// Blog Control --------------------------------------------------
+bool basics::Controller_blog::has_blog() const
 {
     if (current_blog_) {
         return true;
@@ -46,26 +47,7 @@ bool basics::Controller_blog::has_current_blog() const
     }
 }
     
-void basics::Controller_blog::generate_current_blog()
-{
-    if (!this->has_current_blog()) {
-        throw new std::runtime_error("No blog currently selected");
-    }
-
-    logger_.info("Début de la génération du blog");
-    basics::Generator gen;
-    basics::Persistable_blog blog(current_blog_->get_posts(),
-                                  current_blog_->get_config());    
-
-    gen.templatize_the_fucker(current_blog_->get_template_file(),
-                              current_blog_->get_blog_folder(),
-                              blog);
-    
-    logger_.info("Blog généré");
-}
-
-    
-std::string basics::Controller_blog::create_new_blog(std::string &blog_name, std::string &blog_parent_path, bool override, bool sample)
+std::string basics::Controller_blog::create_blog(std::string &blog_name, std::string &blog_parent_path, bool override, bool sample)
 {
     bfs::path blog_parent_folder(blog_parent_path);
     bfs::path blog_folder = blog_parent_folder / blog_name;
@@ -79,7 +61,6 @@ std::string basics::Controller_blog::create_new_blog(std::string &blog_name, std
 
     return current_blog_->get_blog_path();
 }
-
     
 std::string basics::Controller_blog::open_blog(std::string &blog_folder_path)
 {
@@ -101,36 +82,28 @@ std::string basics::Controller_blog::open_blog(std::string &blog_folder_path)
     return blog_folder.string();
 }    
 
-std::string 
-basics::Controller_blog::add_post_to_current_blog(
-    std::string& title, 
-    std::string& author, 
-    std::string& life)
+void basics::Controller_blog::generate_blog()
 {
-    if (has_current_blog()) {
-        current_blog_->add_post(title, author, life);
-        persist_current_blog();
+    if (!this->has_current_blog()) {
+        throw new std::runtime_error("No blog currently selected");
     }
-    return "greetings from add_post_to_current_blog";
+
+    logger_.info("Début de la génération du blog");
+    basics::Generator gen;
+    basics::Persistable_blog blog(current_blog_->get_posts(),
+                                  current_blog_->get_config());    
+
+    gen.templatize_the_fucker(current_blog_->get_template_file(),
+                              current_blog_->get_blog_folder(),
+                              blog);
+    
+    logger_.info("Blog généré");
 }
 
-//std::vector<std::string> basics::Controller_blog::get_blog_names()
-//{
-//    std::vector<std::string> paths;
-//    
-//    std::set<bfs::path>::const_iterator it = all_blogs_.begin();
-//    std::set<bfs::path>::const_iterator end = all_blogs_.end();
-//    
-//    for (; it != end; ++it) {
-//        paths.push_back(it->string());
-//    }
-//    
-//    return paths;
-//}
-//
-std::vector<std::string> basics::Controller_blog::get_post_id_list()
+// Blog Info --------------------------------------------------
+std::vector<std::string> basics::Controller_blog::post_list()
 {
-    if (!has_current_blog()) {
+    if (!has_blog()) {
         std::vector<std::string> empty;
         return empty;
     }
@@ -138,17 +111,36 @@ std::vector<std::string> basics::Controller_blog::get_post_id_list()
     return current_blog_->get_post_ids();
 }
 
-std::string basics::Controller_blog::get_post_content(std::string &timestamp)
+// Post Control --------------------------------------------------
+void basics::Controller_blog::add_post(std::string& title, 
+                                              std::string& author, 
+                                              std::string& life)
 {
-    if (!has_current_blog()) {
-        return "";
+    if (has_blog()) {
+        current_blog_->add_post(title, author, life);
+        persist_current_blog();
     }
-
-    std::string life = current_blog_->get_post_content(timestamp);
-    return life;
 }
 
+basics::Post basics::Controller_blog::post(std::string& timestamp_str)
+{
+    return current_blog_->get_post(timestamp_str);
+}
 
+void basics::Controller_blog::edit_post(std::string& timestamp_str,
+                                        std::string& title,
+                                        std::string& author,
+                                        std::string& life)
+{
+    current_blog_->edit_post(timestamp_str, title, author, life);
+}
+
+void basics::Controller_blog::remove_post(std::string& timestamp_str)
+{
+    current_blog_->remove_post(timestamp_str);
+}
+
+// Private --------------------------------------------------
 void basics::Controller_blog::persist_current_blog() 
 {
     if (!has_current_blog()) {
@@ -161,5 +153,44 @@ void basics::Controller_blog::persist_current_blog()
     persistor.write_blog(current_blog_->get_content_file(), blog);
 }
 
+// Deprecated --------------------------------------------------
+std::string basics::Controller_blog::create_new_blog(std::string &blog_name, std::string &blog_parent_path, bool override, bool sample)
+{
+    return create_new_blog(blog_name, blog_parent_path, override, sample);
+}
 
+std::string basics::Controller_blog::get_post_content(std::string &timestamp)
+{
+    if (!has_current_blog()) {
+        return "";
+    }
+
+    std::string life = current_blog_->get_post_content(timestamp);
+    return life;
+}
+
+std::string 
+basics::Controller_blog::add_post_to_current_blog(
+    std::string& title, 
+    std::string& author, 
+    std::string& life)
+{
+    add_post(title, author, life);
+    return "greetings from add_post_to_current_blog";
+}
+
+bool basics::Controller_blog::has_current_blog() const
+{
+    return has_blog();
+}
+
+void basics::Controller_blog::generate_current_blog()
+{
+    generate_blog();
+}
+
+std::vector<std::string> basics::Controller_blog::get_post_id_list()
+{
+    return post_list();
+}
 

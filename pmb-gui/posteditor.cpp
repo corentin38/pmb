@@ -26,12 +26,24 @@
 #include "posteditor.hpp"
 #include "ui_posteditor.h"
 #include <iostream>
+#include <QDateTime>
 
 PostEditor::PostEditor(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PostEditor)
 {
     ui->setupUi(this);
+}
+
+PostEditor::PostEditor(QString title, QString author, QString life, QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::PostEditor)
+{
+    ui->setupUi(this);
+
+    ui->titleEdit->setText(title);
+    ui->authorEdit->setText(author);
+    ui->lifeEdit->setText(life);
 }
 
 PostEditor::~PostEditor()

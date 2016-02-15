@@ -40,22 +40,16 @@ public:
     Post() : title_(), author_(), life_(), timestamp_() {}
 
     Post(std::string title, std::string author, std::string life)
-        : title_(title), author_(author), life_(life), timestamp_(bdt::second_clock::local_time())
+        : title_(title), author_(author), life_(life), timestamp_(bdt::second_clock::local_time()),
+          editions_()
     {}
 
     Post(std::string title, std::string author, std::string life, std::string timestamp_str)
-        : title_(title), author_(author), life_(life), timestamp_()
+        : title_(title), author_(author), life_(life), timestamp_(), editions_()
     {
-        std::istringstream input_stream(timestamp_str);
-
-        //DO NOT delete this pointer, the locale will do it
-        bdt::time_input_facet *xsl_time_facet = new bdt::time_input_facet("%Y-%m-%dT%H:%M:%S");
-
-        std::locale loc(input_stream.getloc(), xsl_time_facet);    
-        input_stream.imbue(loc);
-        input_stream >> timestamp_;
+        timestamp_ = str_to_timestamp(timestamp_str);
     }
-
+    
     inline std::string get_title() 
     {
         return title_;
@@ -71,6 +65,35 @@ public:
         return life_;
     }
     
+    inline void set_title(std::string title) 
+    {
+        title_ = title;
+    }
+   
+    inline void set_author(std::string author)
+    {
+        author_ = author;
+    }
+
+    inline void set_life(std::string life)
+    {
+        life_ = life;
+    }
+
+    inline void add_edition()
+    {
+        editions_.push_back(bdt::second_clock::local_time());
+    }
+
+    inline std::vector<std::string> editions()
+    {
+        std::vector<std::string> editions_str;
+        for (std::vector<bdt::ptime>::iterator it = editions_.begin(); it != editions_.end(); ++it) {
+            editions_str.push_back(timestamp_to_str(*it));
+        }
+        return editions_str;
+    }
+    
     inline bdt::ptime get_timestamp() const
     {
         return timestamp_;
@@ -78,17 +101,38 @@ public:
     
     inline std::string get_timestamp_str() 
     {
+        return timestamp_to_str(timestamp_);
+    }
+
+    inline std::string timestamp_to_str(bdt::ptime timestamp)
+    {
         std::stringstream stream;
 
         //DO NOT delete this pointer, the locale will do it
-        bdt::time_facet *xsl_time_facet = new bdt::time_facet("%Y-%m-%dT%H:%M:%S");
+        bdt::time_facet *xsl_time_facet = new bdt::time_facet(facet);
 
         std::locale loc(stream.getloc(), xsl_time_facet);    
         stream.imbue(loc);
-        stream << timestamp_;
+        stream << timestamp;
         return stream.str();
     }
 
+    inline bdt::ptime str_to_timestamp(std::string timestamp_str)
+    {
+        bdt::ptime timestamp;
+        
+        std::istringstream input_stream(timestamp_str);
+
+        //DO NOT delete this pointer, the locale will do it
+        bdt::time_input_facet *xsl_time_facet = new bdt::time_input_facet(facet);
+
+        std::locale loc(input_stream.getloc(), xsl_time_facet);    
+        input_stream.imbue(loc);
+        input_stream >> timestamp;
+
+        return timestamp;
+    }
+    
     bool operator <(const Post &other) const 
     {
         return timestamp_ > other.get_timestamp();
@@ -96,10 +140,13 @@ public:
     
    
 private:
+    const char* facet = "%Y-%m-%dT%H:%M:%S";
+    
     std::string title_;
     std::string author_;
     std::string life_;
     bdt::ptime timestamp_;
+    std::vector<bdt::ptime> editions_;
 };
 
 } // namespace

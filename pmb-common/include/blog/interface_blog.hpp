@@ -43,18 +43,12 @@ public:
     virtual std::vector<basics::Post> get_posts() = 0;
     virtual std::vector<std::string> get_post_ids() = 0;
     virtual std::string get_post_content(std::string) = 0;
+    virtual basics::Post get_post(std::string&) = 0;
     
     virtual void add_post(const std::string title, const std::string author, const std::string life) = 0;
-//    virtual void add_post(basics::Post) = 0;
-    
-//    virtual void remove_post(bdt::Datetime) = 0;
-//    virtual void remove_post(std::string) = 0;
-    
-//    virtual void write_content() = 0;
-//    virtual void write_save() = 0;
+    virtual void edit_post(std::string&, std::string&, std::string&, std::string&) = 0;
+    virtual void remove_post(std::string&) = 0;
 
-//    virtual void generate(const int post_per_page = 10, const std::string page_base_name = "index") = 0;
-  
     virtual std::string get_blog_path() = 0;
     virtual bfs::path get_blog_folder() = 0;
     virtual bfs::path get_template_file() = 0;

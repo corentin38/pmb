@@ -38,6 +38,7 @@ class PostEditor : public QDialog
 
 public:
     explicit PostEditor(QWidget *parent = 0);
+    PostEditor(QString title, QString author, QString life, QWidget *parent = 0);
     ~PostEditor();
 
     const std::string get_post_title() const;
@@ -49,8 +50,6 @@ private slots:
 
 private:
     Ui::PostEditor *ui;
-
-
 };
 
 #endif
