@@ -112,7 +112,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QListView" name="postList">
+         <widget class="WPostList" name="postList">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -258,6 +258,13 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>WPostList</class>
+   <extends>QListView</extends>
+   <header>wpostlist.hpp</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

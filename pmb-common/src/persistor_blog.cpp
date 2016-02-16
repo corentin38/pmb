@@ -121,8 +121,19 @@ basics::Persistable_blog basics::Persistor_blog::read_blog(bfs::path content_sto
         rapidxml::xml_node<> *life_node = post->first_node("mylife");
         std::string life = basics::unescape_string(life_node->value());
 
+        // Reading editions
+        rapidxml::xml_node<> *eds = post->first_node("editions");
+        std::vector<std::string> editions;
+        rapidxml::xml_node<> *ed;
+        for (ed = eds->first_node("edition"); ed; ed = ed->next_sibling("edition")) {
+            std::string edition = ed->value();
+            editions.push_back(edition);
+        }
+        
         // Creating a new Post object from all infos
         basics::Post another_post(title, author, life, timestamp_str);
+        another_post.set_editions(editions);
+        
         posts.push_back(another_post);
     }
 
@@ -247,6 +258,16 @@ void basics::Persistor_blog::write_blog(bfs::path content_storage_file, basics::
         another_post->append_node(title_child);
         rapidxml::xml_node<> *mylife_child = content.allocate_node(rapidxml::node_element, "mylife", life);
         another_post->append_node(mylife_child);
+
+        // Adding edition dates
+        rapidxml::xml_node<> *eds_node = content.allocate_node(rapidxml::node_element, "editions");
+        std::vector<std::string> editions = it->editions();
+        for (std::vector<std::string>::iterator it = editions.begin(); it != editions.end(); ++it) {
+            char *edition = content.allocate_string(it->c_str());
+            rapidxml::xml_node<> *ed_node = content.allocate_node(rapidxml::node_element, "edition", edition);
+            eds_node->append_node(ed_node);
+        }    
+        another_post->append_node(eds_node);
         
         // Adding node to post root
         post_node->append_node(another_post);

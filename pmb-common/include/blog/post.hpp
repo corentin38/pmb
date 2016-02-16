@@ -93,18 +93,28 @@ public:
         }
         return editions_str;
     }
+
+    inline void set_editions(std::vector<std::string> eds) 
+    {
+        std::vector<bdt::ptime> eds_ts;
+        for (std::vector<std::string>::iterator it = eds.begin(); it != eds.end(); ++it) {
+            eds_ts.push_back(str_to_timestamp(*it));
+        }
+        
+        editions_ = eds_ts;
+    }
     
     inline bdt::ptime get_timestamp() const
     {
         return timestamp_;
     }
     
-    inline std::string get_timestamp_str() 
+    inline std::string get_timestamp_str() const
     {
         return timestamp_to_str(timestamp_);
     }
 
-    inline std::string timestamp_to_str(bdt::ptime timestamp)
+    inline std::string timestamp_to_str(bdt::ptime timestamp) const
     {
         std::stringstream stream;
 
@@ -117,7 +127,7 @@ public:
         return stream.str();
     }
 
-    inline bdt::ptime str_to_timestamp(std::string timestamp_str)
+    inline bdt::ptime str_to_timestamp(std::string timestamp_str) const
     {
         bdt::ptime timestamp;
         

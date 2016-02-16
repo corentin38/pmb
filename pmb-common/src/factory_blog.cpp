@@ -189,13 +189,16 @@ void basics::Factory_blog::remove_blog_folder( bfs::path blog_folder )
     rmfile(content_file);
     rmfile(template_file);
 
-    if (bfs::is_empty(blog_folder)) {
-        bfs::remove_all(blog_folder);
-    } else {
-        std::stringstream err;
-        err << "Blog directory not empty after removing all known blog files and dirs";
-        throw std::runtime_error(err.str());
-    }    
+    // Checking if all remaining files are html files
+    for (bfs::directory_entry& f : bfs::directory_iterator(blog_folder)) {
+        if (!ends_with(f.path().string(), ".html") && !ends_with(f.path().string(), ".directory")) {
+            std::stringstream err;
+            err << "Blog directory not empty after removing all known blog files and dirs";
+            throw std::runtime_error(err.str());
+        }
+    }
+    
+    bfs::remove_all(blog_folder);
 }
 
 void basics::Factory_blog::rmdir(bfs::path dir) 
@@ -212,3 +215,10 @@ void basics::Factory_blog::rmfile(bfs::path file)
     }
 }
 
+bool basics::Factory_blog::ends_with (std::string const &fullString, std::string const &ending) {
+    if (fullString.length() >= ending.length()) {
+        return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
+    } else {
+        return false;
+    }
+}

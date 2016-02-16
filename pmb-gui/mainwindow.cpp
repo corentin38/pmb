@@ -9,9 +9,6 @@
 #include <QStringListModel>
 #include <algorithm>
 
-// TO DEL
-#include <iostream>
-
 namespace bfs = boost::filesystem;
 
 MainWindow::MainWindow(basics::Simple_logger logger, QWidget *parent) :
@@ -24,13 +21,15 @@ MainWindow::MainWindow(basics::Simple_logger logger, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    connect(ui->postList, SIGNAL (selected_post_changed(const QString&)), this, SLOT (set_post_display(const QString&)));
+    connect(this, SIGNAL (blog_changed(const QString&)), this, SLOT (set_blog_display(const QString&)));
+    connect(this, SIGNAL (post_list_changed(std::vector<basics::Post>)), ui->postList, SLOT (set_post_list(std::vector<basics::Post>)));
+
+
     logger_.info("Démarrage de l'application Pimp My Blog");
     logger_.info("Version : EN COURS DE DEVELOPPEMENT");    
 
     status("Aucun blog chargé");
-    
-//    ui->blogCB->addItem(tr("(Aucun)"));
-    update_frame();
 }
 
 MainWindow::~MainWindow()
@@ -95,8 +94,9 @@ void MainWindow::on_actionNew_triggered()
     }
 
 
-    blog_history_.push_back(new_blog_path);
-    update_frame();
+    blog_history_ << QString::fromStdString(new_blog_path);
+    //emit post_list_changed(ctrl_blog_.post_list());
+    emit blog_changed(QString::fromStdString(ctrl_blog_.get_blog_path()));
     
     logger_.info("Nouveau blog créé avec succès");
     delete wiz;
@@ -127,16 +127,19 @@ void MainWindow::on_actionOpen_triggered()
     }
 
     // Add to history if does not exist already
-    if(std::find(blog_history_.begin(), blog_history_.end(), blog_folder_path) == blog_history_.end()) {
-        blog_history_.push_back(blog_folder_path);
+    if(blog_history_.indexOf(q_blog_folder_path) < 0) {
+        blog_history_ << q_blog_folder_path;
     }
-    
+
+    //emit post_list_changed(ctrl_blog_.post_list());
+    emit blog_changed(QString::fromStdString(ctrl_blog_.get_blog_path()));
     status("Blog chargé !");
-    update_frame();
 }
 
 void MainWindow::on_addPostButton_clicked()
 {
+    if (!ctrl_blog_.has_blog()) return;
+
     PostEditor *editor = new PostEditor(this);
     int code = editor->exec();
     if (code == QDialog::Rejected) {
@@ -148,31 +151,37 @@ void MainWindow::on_addPostButton_clicked()
     std::string author = editor->get_post_author();
     std::string life = editor->get_post_life();
     
+    basics::Post post();
+
     try {
-        std::string new_blog_path = ctrl_blog_.add_post_to_current_blog(title, author, life);
+        post = ctrl_blog_.add_post_to_current_blog(title, author, life);
     }
     catch (const std::exception& e) {
         warning(std::string("Impossible de créer le post !\n") + std::string(e.what()));
         delete editor;
         return;
     }
-    
-    update_frame();
-    
+
+    emit post_list_add(post);
     logger_.info("Nouveau post créé avec succès");
     delete editor;
 }
 
 void MainWindow::on_remPostButton_clicked()
 {
-    std::string post_id = ui->postList->currentIndex().data().toString().toStdString();
+    if (!ctrl_blog_.has_blog()) return;
 
-    ctrl_blog_.remove_post(post_id);
-    update_frame();
+    QString post_id = ui->postList->selected_post_id();
+
+    ctrl_blog_.remove_post(post_id.toStdString());
+    basics::Post post(title, author, life);
+    emit post_list_add(post);
 }
 
 void MainWindow::on_editButton_clicked()
 {
+    if (!ctrl_blog_.has_blog()) return;
+
     std::string post_id = ui->postList->currentIndex().data().toString().toStdString();
 
     basics::Post cur = ctrl_blog_.post(post_id);
@@ -200,92 +209,60 @@ void MainWindow::on_editButton_clicked()
         return;
     }
 
-    update_frame();
-
     logger_.info("Post édité avec succès");
     delete editor;
 }
 
 void MainWindow::on_blogCB_currentIndexChanged(const QString &text) 
 {
-    if (clearing_combo_) return;
-
-    std::string blog_folder_path = text.toUtf8().constData();
-
+    std::string blog_folder_path = text.toStdString();
     if (blog_folder_path == ctrl_blog_.get_blog_path()) {
         status("Blog déjà chargé !");
         return;
     }
     
-    std::string text_str = text.toStdString();
-    ctrl_blog_.open_blog(text_str);
+    if (blog_history_.indexOf(text) < 0) {
+        blog_history_ << text;
+    }
 
-    update_frame();
+    ctrl_blog_.open_blog(blog_folder_path);
+
+    emit post_list_changed(ctrl_blog_.post_list());
 }
 
-void MainWindow::on_postList_clicked(const QModelIndex & index) 
+
+void MainWindow::set_blog_display(const QString& blog_path)
 {
-    std::string post_id = index.data().toString().toStdString();
+    if (blog_history_.indexOf(blog_path) < 0) {
+        blog_history_ << blog_path;
+    }
+
+    bool old_state = ui->blogCB->blockSignals(true);
+
+    int index = ui->blogCB->findText(blog_path);
+    if (index < 0) {
+        ui->blogCB->addItem(blog_path);
+    } else {
+        ui->blogCB->setCurrentIndex(index);
+    }
+    emit post_list_changed(ctrl_blog_.post_list());
+
+    ui->blogCB->blockSignals(old_state);
+}
+
+void MainWindow::set_post_display(const QString& post_id)
+{
     try {
-        ui->postDisplay->setText(QString::fromStdString(ctrl_blog_.get_post_content(post_id)));    
+        std::string post_id_str = post_id.toStdString();
+        basics::Post post = ctrl_blog_.post(post_id_str);
+        std::string post_content_str = post.get_life();
+        QString post_content = QString::fromStdString(post_content_str);
+        ui->postDisplay->setText(post_content);
     }
     catch (const std::exception& e) {
         warning(std::string("Impossible d'afficher le post !\n") + std::string(e.what()));
         return;
     }
-}
-
-void MainWindow::update_post_list()
-{
-    std::vector<std::string> post_ids = ctrl_blog_.get_post_id_list();
-    std::vector<std::string>::const_iterator it = post_ids.begin();
-    std::vector<std::string>::const_iterator end = post_ids.end();
- 
-    QStringListModel *model = new QStringListModel();
-    QStringList post_id_list;
-
-    for (; it != end; ++it) {
-        post_id_list << QString::fromStdString(*it);
-    }
-    
-    model->setStringList(post_id_list);
-    ui->postList->setModel(model);    
-}
-
-void MainWindow::update_blog_combobox() 
-{
-    clearing_combo_ = true;
-    ui->blogCB->clear();
-
-    if (!ctrl_blog_.has_current_blog() && blog_history_.size() == 0) {
-        ui->blogCB->setEnabled(false);
-        clearing_combo_ = false;
-        return;
-    }
-
-    ui->blogCB->setEnabled(true);
-    
-    std::vector<std::string>::const_iterator it = blog_history_.begin();
-    std::vector<std::string>::const_iterator end = blog_history_.end();
-    
-    QStringList fucking_qt_list;
-    
-    for (; it != end; ++it) {
-        fucking_qt_list << QString::fromStdString(*it);
-    }
-    
-    ui->blogCB->addItems(fucking_qt_list);
-
-    int curr_index = ui->blogCB->findText(QString::fromStdString(ctrl_blog_.get_blog_path()));
-    ui->blogCB->setCurrentIndex(curr_index);
-
-    clearing_combo_ = false;
-}
-
-void MainWindow::update_frame() 
-{
-    update_post_list();
-    update_blog_combobox();
 }
 
 void MainWindow::warning(std::string message) 

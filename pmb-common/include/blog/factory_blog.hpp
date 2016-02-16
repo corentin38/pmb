@@ -59,9 +59,7 @@ private:
     void remove_blog_folder(bfs::path);
     void rmdir(bfs::path);
     void rmfile(bfs::path);
-    
-
-
+    bool ends_with (std::string const &fullString, std::string const &ending);
    
 };
 

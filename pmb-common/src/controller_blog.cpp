@@ -101,7 +101,7 @@ void basics::Controller_blog::generate_blog()
 }
 
 // Blog Info --------------------------------------------------
-std::vector<std::string> basics::Controller_blog::post_list()
+std::vector<std::string> basics::Controller_blog::post_id_list()
 {
     if (!has_blog()) {
         std::vector<std::string> empty;
@@ -111,8 +111,18 @@ std::vector<std::string> basics::Controller_blog::post_list()
     return current_blog_->get_post_ids();
 }
 
+std::vector<basics::Post> basics::Controller_blog::post_list()
+{
+    if (!has_blog()) {
+        std::vector<basics::Post> empty;
+        return empty;
+    }
+    
+    return current_blog_->get_posts();
+}
+
 // Post Control --------------------------------------------------
-void basics::Controller_blog::add_post(std::string& title, 
+basics::Post basics::Controller_blog::add_post(std::string& title, 
                                               std::string& author, 
                                               std::string& life)
 {
@@ -132,7 +142,10 @@ void basics::Controller_blog::edit_post(std::string& timestamp_str,
                                         std::string& author,
                                         std::string& life)
 {
+    if (!has_blog()) return;
+    
     current_blog_->edit_post(timestamp_str, title, author, life);
+    persist_current_blog();
 }
 
 void basics::Controller_blog::remove_post(std::string& timestamp_str)
@@ -191,6 +204,6 @@ void basics::Controller_blog::generate_current_blog()
 
 std::vector<std::string> basics::Controller_blog::get_post_id_list()
 {
-    return post_list();
+    return post_id_list();
 }
 

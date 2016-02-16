@@ -32,6 +32,7 @@
     <post date="1989-05-10T13:18:37" author="Exemple">
       <title>It works !</title>
       <mylife>Ceci est un post d'exemple pour vous montrer à quoi ressemblera ce blog lorsque vous l'utiliserez.</mylife>
+      <editions />
     </post>
     
   </posts>

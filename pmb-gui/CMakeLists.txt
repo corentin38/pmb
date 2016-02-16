@@ -29,6 +29,7 @@ add_executable(
   blogwizard.cpp
   posteditor.cpp
   mainwindow.cpp
+  wpostlist.cpp
   ${QT_UI_FILES}
   ${QT_RCC_FILES}
 )

@@ -53,7 +53,8 @@ public:
     void generate_blog();    
     
     // Blog Info
-    std::vector<std::string> post_list();
+    std::vector<std::string> post_id_list();
+    std::vector<basics::Post> post_list();
 
     inline std::string blog_path() 
     {
