@@ -61,8 +61,8 @@ public:
 
     basics::Post get_post(std::string&);
     
-    void add_post(std::string, std::string, std::string);
-    void edit_post(std::string&, std::string&, std::string&, std::string&);
+    basics::Post add_post(std::string, std::string, std::string);
+    basics::Post edit_post(std::string&, std::string&, std::string&, std::string&);
     void remove_post(std::string&);
 
     inline std::string get_blog_path() 

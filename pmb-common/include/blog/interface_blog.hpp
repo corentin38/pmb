@@ -45,8 +45,8 @@ public:
     virtual std::string get_post_content(std::string) = 0;
     virtual basics::Post get_post(std::string&) = 0;
     
-    virtual void add_post(const std::string title, const std::string author, const std::string life) = 0;
-    virtual void edit_post(std::string&, std::string&, std::string&, std::string&) = 0;
+    virtual basics::Post add_post(const std::string title, const std::string author, const std::string life) = 0;
+    virtual basics::Post edit_post(std::string&, std::string&, std::string&, std::string&) = 0;
     virtual void remove_post(std::string&) = 0;
 
     virtual std::string get_blog_path() = 0;

@@ -122,35 +122,43 @@ std::vector<basics::Post> basics::Controller_blog::post_list()
 }
 
 // Post Control --------------------------------------------------
-basics::Post basics::Controller_blog::add_post(std::string& title, 
-                                              std::string& author, 
-                                              std::string& life)
-{
-    if (has_blog()) {
-        current_blog_->add_post(title, author, life);
-        persist_current_blog();
-    }
-}
 
 basics::Post basics::Controller_blog::post(std::string& timestamp_str)
 {
     return current_blog_->get_post(timestamp_str);
 }
 
-void basics::Controller_blog::edit_post(std::string& timestamp_str,
+basics::Post basics::Controller_blog::add_post(std::string& title, 
+                                              std::string& author, 
+                                              std::string& life)
+{
+    if (!has_blog()) {
+        throw new std::runtime_error("No blog currently selected");
+    }
+    
+    basics::Post post = current_blog_->add_post(title, author, life);
+    persist_current_blog();
+    return post;
+}
+
+basics::Post basics::Controller_blog::edit_post(std::string& timestamp_str,
                                         std::string& title,
                                         std::string& author,
                                         std::string& life)
 {
-    if (!has_blog()) return;
+    if (!has_blog()) {
+        throw new std::runtime_error("No blog currently selected");
+    }
     
-    current_blog_->edit_post(timestamp_str, title, author, life);
+    basics::Post post = current_blog_->edit_post(timestamp_str, title, author, life);
     persist_current_blog();
+    return post;
 }
 
 void basics::Controller_blog::remove_post(std::string& timestamp_str)
 {
     current_blog_->remove_post(timestamp_str);
+    persist_current_blog();
 }
 
 // Private --------------------------------------------------

@@ -81,13 +81,14 @@ basics::Post basics::Blog_local::get_post(std::string& timestamp)
     throw std::runtime_error(err.str());
 }
 
-void basics::Blog_local::add_post(std::string title, std::string author, std::string life) 
+basics::Post basics::Blog_local::add_post(std::string title, std::string author, std::string life) 
 {
     basics::Post another_post(title, author, life);
-    post_index_[ another_post.get_timestamp_str() ] = another_post;    
+    post_index_[ another_post.get_timestamp_str() ] = another_post;
+    return another_post;
 }
 
-void basics::Blog_local::edit_post(std::string& post_id,
+basics::Post basics::Blog_local::edit_post(std::string& post_id,
                                    std::string& title,
                                    std::string& author,
                                    std::string& life)
@@ -99,6 +100,7 @@ void basics::Blog_local::edit_post(std::string& post_id,
     update.add_edition();
     
     post_index_[post_id] = update;
+    return update;
 }
 
 void basics::Blog_local::remove_post(std::string& post_id)

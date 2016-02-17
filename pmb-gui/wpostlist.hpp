@@ -5,6 +5,7 @@
 #include <QListView>
 #include <blog/post.hpp>
 #include <vector>
+#include <QStringListModel>
 
 class WPostList : public QListView
 {
@@ -14,12 +15,13 @@ public:
     QString selected_post_id();
 
 public slots:
-    void set_post_list(std::vector<basics::Post>, int);
-    void add_post(const basics::Post &post);
-    void remove_post(const basics::Post &post);
+    void set_post_list(std::vector<basics::Post>);
+    void add_post(const basics::Post&);
+    void remove_post(const QString&);
 
 signals:
     void selected_post_changed(const QString&);
+    void empty();
 
 private slots:
     void handle_indexes_moved(const QModelIndex& index);

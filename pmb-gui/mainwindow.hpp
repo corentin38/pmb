@@ -25,13 +25,14 @@ public:
     ~MainWindow();
 
 signals:
+    void post_changed(const QString&);
     void post_list_changed(std::vector<basics::Post>);
     void post_list_add(const basics::Post&);
-    void post_list_remove(const basics::Post&);
+    void post_list_remove(const QString&);
     void blog_changed(const QString&);
 
 private slots:
-
+    void empty_post_display();
     void on_actionGenerate_triggered();
     void on_actionNew_triggered();
     void on_actionOpen_triggered();

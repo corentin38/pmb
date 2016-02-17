@@ -65,9 +65,9 @@ public:
     }    
 
     // Post Control
-    void add_post(std::string&, std::string&, std::string&);
+    basics::Post add_post(std::string&, std::string&, std::string&);
     basics::Post post(std::string&);
-    void edit_post(std::string&, std::string&, std::string&, std::string&);
+    basics::Post edit_post(std::string&, std::string&, std::string&, std::string&);
     void remove_post(std::string&);
     
     // Deprecated

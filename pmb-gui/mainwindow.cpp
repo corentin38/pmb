@@ -22,9 +22,12 @@ MainWindow::MainWindow(basics::Simple_logger logger, QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->postList, SIGNAL (selected_post_changed(const QString&)), this, SLOT (set_post_display(const QString&)));
+    connect(ui->postList, SIGNAL (empty()), this, SLOT (empty_post_display()));
+    connect(this, SIGNAL (post_changed(const QString&)), this, SLOT (set_post_display(const QString&)));
     connect(this, SIGNAL (blog_changed(const QString&)), this, SLOT (set_blog_display(const QString&)));
     connect(this, SIGNAL (post_list_changed(std::vector<basics::Post>)), ui->postList, SLOT (set_post_list(std::vector<basics::Post>)));
-
+    connect(this, SIGNAL (post_list_add(const basics::Post&)), ui->postList, SLOT (add_post(const basics::Post&)));
+    connect(this, SIGNAL (post_list_remove(const QString&)), ui->postList, SLOT (remove_post(const QString&)));
 
     logger_.info("Démarrage de l'application Pimp My Blog");
     logger_.info("Version : EN COURS DE DEVELOPPEMENT");    
@@ -150,11 +153,10 @@ void MainWindow::on_addPostButton_clicked()
     std::string title = editor->get_post_title();
     std::string author = editor->get_post_author();
     std::string life = editor->get_post_life();
-    
-    basics::Post post();
 
     try {
-        post = ctrl_blog_.add_post_to_current_blog(title, author, life);
+        basics::Post post = ctrl_blog_.add_post(title, author, life);
+        emit post_list_add(post);
     }
     catch (const std::exception& e) {
         warning(std::string("Impossible de créer le post !\n") + std::string(e.what()));
@@ -162,7 +164,6 @@ void MainWindow::on_addPostButton_clicked()
         return;
     }
 
-    emit post_list_add(post);
     logger_.info("Nouveau post créé avec succès");
     delete editor;
 }
@@ -172,10 +173,12 @@ void MainWindow::on_remPostButton_clicked()
     if (!ctrl_blog_.has_blog()) return;
 
     QString post_id = ui->postList->selected_post_id();
+    if (post_id == "") return;
 
-    ctrl_blog_.remove_post(post_id.toStdString());
-    basics::Post post(title, author, life);
-    emit post_list_add(post);
+    std::string post_id_str = post_id.toStdString();
+    ctrl_blog_.remove_post(post_id_str);
+
+    emit post_list_remove(post_id);
 }
 
 void MainWindow::on_editButton_clicked()
@@ -201,7 +204,7 @@ void MainWindow::on_editButton_clicked()
     std::string life = editor->get_post_life();
 
     try {
-        ctrl_blog_.edit_post(post_id, title, author, life);
+        cur = ctrl_blog_.edit_post(post_id, title, author, life);
     }
     catch (const std::exception& e) {
         warning(std::string("Impossible de mettre à jour le post :\n") + std::string(e.what()));
@@ -209,6 +212,8 @@ void MainWindow::on_editButton_clicked()
         return;
     }
 
+    QString post_id_updated = QString::fromStdString(cur.get_timestamp_str());
+    emit post_changed(post_id_updated);
     logger_.info("Post édité avec succès");
     delete editor;
 }
@@ -242,9 +247,10 @@ void MainWindow::set_blog_display(const QString& blog_path)
     int index = ui->blogCB->findText(blog_path);
     if (index < 0) {
         ui->blogCB->addItem(blog_path);
-    } else {
-        ui->blogCB->setCurrentIndex(index);
+        index = ui->blogCB->findText(blog_path);
     }
+
+    ui->blogCB->setCurrentIndex(index);
     emit post_list_changed(ctrl_blog_.post_list());
 
     ui->blogCB->blockSignals(old_state);
@@ -263,6 +269,11 @@ void MainWindow::set_post_display(const QString& post_id)
         warning(std::string("Impossible d'afficher le post !\n") + std::string(e.what()));
         return;
     }
+}
+
+void MainWindow::empty_post_display()
+{
+    ui->postDisplay->clear();
 }
 
 void MainWindow::warning(std::string message) 
