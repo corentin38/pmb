@@ -7,6 +7,8 @@
 #include <QModelIndex>
 #include <vector>
 #include <QStringList>
+#include <QSettings>
+#include <QCloseEvent>
 
 #ifndef Q_MOC_RUN
 #include "utils/simple_logger.hpp"
@@ -38,7 +40,7 @@ private slots:
     void on_actionOpen_triggered();
 
     void on_blogCB_currentIndexChanged(const QString&);
-    
+
     void on_addPostButton_clicked();
     void on_editButton_clicked();
     void on_remPostButton_clicked();
@@ -49,6 +51,9 @@ private slots:
     void set_blog_display(const QString &blog_path);
     void set_post_display(const QString&);
 
+protected:
+    void closeEvent(QCloseEvent *event);
+
 private:
     Ui::MainWindow *ui;
     basics::Simple_logger logger_;
@@ -56,7 +61,8 @@ private:
 
     bool clearing_combo_;
     QStringList blog_history_;
-    
+
+    QSettings cfg_;
 
     void warning(std::string);
     void status(std::string, int seconds = 5);

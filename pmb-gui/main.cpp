@@ -1,5 +1,6 @@
 #include "mainwindow.hpp"
 #include <QApplication>
+#include <QSettings>
 
 #ifndef Q_MOC_RUN
 #include "utils/simple_logger.hpp"
@@ -27,6 +28,7 @@ int main(int argc, char *argv[])
     }
 
     basics::Simple_logger logger(log_level, log_folder_path);
+
     QApplication a(argc, argv);
     MainWindow w(logger);
     w.show();

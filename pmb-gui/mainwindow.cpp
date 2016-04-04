@@ -17,7 +17,8 @@ MainWindow::MainWindow(basics::Simple_logger logger, QWidget *parent) :
     logger_(logger),
     ctrl_blog_(logger),
     clearing_combo_(false),
-    blog_history_()
+    blog_history_(),
+    cfg_("mine", "pmb")
 {
     ui->setupUi(this);
 
@@ -30,7 +31,29 @@ MainWindow::MainWindow(basics::Simple_logger logger, QWidget *parent) :
     connect(this, SIGNAL (post_list_remove(const QString&)), ui->postList, SLOT (remove_post(const QString&)));
 
     logger_.info("Démarrage de l'application Pimp My Blog");
-    logger_.info("Version : EN COURS DE DEVELOPPEMENT");    
+    logger_.info("Version : EN COURS DE DEVELOPPEMENT");
+
+    std::string last_blog(cfg_.value("last_blog", "").toString().toStdString());
+    if (!last_blog.empty()) {
+        try {
+            ctrl_blog_.open_blog(last_blog);
+        }
+        catch (const std::exception& e) {
+            warning(std::string("Impossible d'ouvrir le blog !\n") + std::string(e.what()));
+            return;
+        }
+
+        // Add to history if does not exist already
+        QString ta_maman = QString::fromStdString(last_blog);
+        if(blog_history_.indexOf(ta_maman) < 0) {
+            blog_history_ << ta_maman;
+        }
+
+        //emit post_list_changed(ctrl_blog_.post_list());
+        emit blog_changed(QString::fromStdString(ctrl_blog_.get_blog_path()));
+    }
+
+
 
     status("Aucun blog chargé");
 }
@@ -43,7 +66,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionGenerate_triggered()
 {
     status("Génération du blog ...");
-    
+
     try {
         ctrl_blog_.generate_current_blog();
     }
@@ -58,7 +81,7 @@ void MainWindow::on_actionGenerate_triggered()
     status("Blog publié !");
 }
 
-void MainWindow::on_actionNew_triggered() 
+void MainWindow::on_actionNew_triggered()
 {
     BlogWizard *wiz = new BlogWizard(this);
     int code = wiz->exec();
@@ -100,12 +123,12 @@ void MainWindow::on_actionNew_triggered()
     blog_history_ << QString::fromStdString(new_blog_path);
     //emit post_list_changed(ctrl_blog_.post_list());
     emit blog_changed(QString::fromStdString(ctrl_blog_.get_blog_path()));
-    
+
     logger_.info("Nouveau blog créé avec succès");
     delete wiz;
 }
 
-void MainWindow::on_actionOpen_triggered() 
+void MainWindow::on_actionOpen_triggered()
 {
     logger_.info("Chargement d'une instance existante de blog");
 
@@ -120,7 +143,7 @@ void MainWindow::on_actionOpen_triggered()
     if (blog_folder_path.empty()) {
         return;
     }
-    
+
     try {
         ctrl_blog_.open_blog(blog_folder_path);
     }
@@ -218,14 +241,14 @@ void MainWindow::on_editButton_clicked()
     delete editor;
 }
 
-void MainWindow::on_blogCB_currentIndexChanged(const QString &text) 
+void MainWindow::on_blogCB_currentIndexChanged(const QString &text)
 {
     std::string blog_folder_path = text.toStdString();
     if (blog_folder_path == ctrl_blog_.get_blog_path()) {
         status("Blog déjà chargé !");
         return;
     }
-    
+
     if (blog_history_.indexOf(text) < 0) {
         blog_history_ << text;
     }
@@ -276,7 +299,7 @@ void MainWindow::empty_post_display()
     ui->postDisplay->clear();
 }
 
-void MainWindow::warning(std::string message) 
+void MainWindow::warning(std::string message)
 {
     QMessageBox::information(this, QString::fromStdString("Warning !"), QString::fromStdString(message));
 }
@@ -286,3 +309,11 @@ void MainWindow::status(std::string status, int seconds)
     ui->statusBar->showMessage(QString::fromStdString(status), seconds * 1000);
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (ctrl_blog_.has_blog()) {
+        cfg_.setValue("last_blog", QString::fromStdString(ctrl_blog_.get_blog_path()));
+    }
+
+    event->accept();
+}
