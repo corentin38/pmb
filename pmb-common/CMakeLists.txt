@@ -1,6 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 project( pmb-common )
 
+# You can set the CMAKE_INSTALL_PREFIX by passing : -DCMAKE_INSTALL_PREFIX=/home/corentin/.local
 message("Install prefix provided: " ${CMAKE_INSTALL_PREFIX})
 
 ## MAKE SURE THIS POINTS TO PROPER RESOURCE FILES ################
@@ -12,9 +13,9 @@ set( CONTENT_EMPTY_RESOURCE ${RESOURCES}/content_empty.xml )
 set( BOOTSTRAP_RESOURCE ${RESOURCES}/dist )
 set( CSS_RESOURCE ${RESOURCES}/blog.css )
 
-configure_file( 
-  ${CMAKE_SOURCE_DIR}/include/gen/blog_constants.hpp.in 
-  ${CMAKE_SOURCE_DIR}/include/gen/blog_constants.hpp 
+configure_file(
+  ${CMAKE_SOURCE_DIR}/include/gen/blog_constants.hpp.in
+  ${CMAKE_SOURCE_DIR}/include/gen/blog_constants.hpp
 )
 ##################################################################
 
@@ -26,7 +27,7 @@ set( CMAKE_BUILD_TYPE Debug )
 
 find_package( Boost COMPONENTS filesystem log log_setup date_time regex REQUIRED )
 
-include_directories( 
+include_directories(
   ${CMAKE_SOURCE_DIR}/lib/flate
   SYSTEM ${Boost_INCLUDE_DIRS}
   ${CMAKE_SOURCE_DIR}/include
@@ -48,7 +49,7 @@ add_library( ${PROJECT_NAME} SHARED
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-fPIC")
 
 find_library( FLATE libflate.a PATHS ${CMAKE_SOURCE_DIR}/lib/flate )
-target_link_libraries( ${PROJECT_NAME} 
+target_link_libraries( ${PROJECT_NAME}
   utils
   cppmarkdown
   ${Boost_LIBRARIES}
@@ -75,5 +76,3 @@ install(DIRECTORY include DESTINATION pmb)
 
 # # LIBRARY
 install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION pmb)
-
-
