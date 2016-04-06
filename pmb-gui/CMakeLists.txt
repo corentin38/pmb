@@ -12,6 +12,7 @@ set( CMAKE_INCLUDE_CURRENT_DIR ON )
 set( CMAKE_AUTOMOC ON )
 set( CMAKE_BUILD_TYPE Debug )
 
+find_package( Threads )
 find_package( Qt5 REQUIRED Widgets )
 find_package( Boost COMPONENTS thread system filesystem log log_setup date_time regex REQUIRED )
 find_library( LIBPMB_COMMON libpmb-common.so PATHS ${PMB_COMMON} )
@@ -24,7 +25,7 @@ include_directories(
 )
 
 add_executable(
-  ${PROJECT_NAME} 
+  ${PROJECT_NAME}
   main.cpp
   blogwizard.cpp
   posteditor.cpp
@@ -34,9 +35,10 @@ add_executable(
   ${QT_RCC_FILES}
 )
 
-target_link_libraries( ${PROJECT_NAME} 
+target_link_libraries( ${PROJECT_NAME}
   ${Boost_LIBRARIES}
   ${LIBPMB_COMMON}
+  ${CMAKE_THREAD_LIBS_INIT}
 )
 
 qt5_use_modules( ${PROJECT_NAME} Widgets )
