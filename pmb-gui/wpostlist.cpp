@@ -19,8 +19,9 @@ QString WPostList::selected_post_id()
 
 void WPostList::set_post_list(std::vector<basics::Post> posts)
 {
-    std::vector<basics::Post>::const_iterator it = posts.begin();
-    std::vector<basics::Post>::const_iterator end = posts.end();
+    std::vector<basics::Post>::reverse_iterator it = posts.rbegin();
+    std::vector<basics::Post>::reverse_iterator end = posts.rend();
+
 
     QStringList post_id_list;
 

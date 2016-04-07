@@ -66,6 +66,12 @@ private:
 
     void warning(std::string);
     void status(std::string, int seconds = 5);
+
+    // helpers
+    void gen();
+    void create(std::string, std::string, bool, bool);
+    void open(std::string);
+
 };
 
 #endif // MAINWINDOW_HPP

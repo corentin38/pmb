@@ -35,25 +35,8 @@ MainWindow::MainWindow(basics::Simple_logger logger, QWidget *parent) :
 
     std::string last_blog(cfg_.value("last_blog", "").toString().toStdString());
     if (!last_blog.empty()) {
-        try {
-            ctrl_blog_.open_blog(last_blog);
-        }
-        catch (const std::exception& e) {
-            warning(std::string("Impossible d'ouvrir le blog !\n") + std::string(e.what()));
-            return;
-        }
-
-        // Add to history if does not exist already
-        QString ta_maman = QString::fromStdString(last_blog);
-        if(blog_history_.indexOf(ta_maman) < 0) {
-            blog_history_ << ta_maman;
-        }
-
-        //emit post_list_changed(ctrl_blog_.post_list());
-        emit blog_changed(QString::fromStdString(ctrl_blog_.get_blog_path()));
+        open(last_blog);
     }
-
-
 
     status("Aucun blog chargé");
 }
@@ -63,7 +46,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_actionGenerate_triggered()
+void MainWindow::gen()
 {
     status("Génération du blog ...");
 
@@ -79,6 +62,28 @@ void MainWindow::on_actionGenerate_triggered()
     }
 
     status("Blog publié !");
+}
+
+void MainWindow::on_actionGenerate_triggered()
+{
+    gen();
+}
+
+void MainWindow::create(std::string name, std::string path, bool over, bool sample)
+{
+    std::string new_blog_path = "";
+    try {
+        new_blog_path = ctrl_blog_.create_new_blog(name, path, over, sample);
+    }
+    catch (const std::exception& e) {
+        warning(std::string("Impossible de créer le blog !\n") + std::string(e.what()));
+        return;
+    }
+
+    blog_history_ << QString::fromStdString(new_blog_path);
+    emit blog_changed(QString::fromStdString(ctrl_blog_.get_blog_path()));
+
+    logger_.info("Nouveau blog créé avec succès");
 }
 
 void MainWindow::on_actionNew_triggered()
@@ -109,29 +114,37 @@ void MainWindow::on_actionNew_triggered()
         return;
     }
 
-    std::string new_blog_path = "";
-    try {
-        new_blog_path = ctrl_blog_.create_new_blog(name, blog_path, override, sample);
-    }
-    catch (const std::exception& e) {
-        warning(std::string("Impossible de créer le blog !\n") + std::string(e.what()));
-        delete wiz;
-        return;
-    }
+    create(name, blog_path, override, sample);
 
-
-    blog_history_ << QString::fromStdString(new_blog_path);
-    //emit post_list_changed(ctrl_blog_.post_list());
-    emit blog_changed(QString::fromStdString(ctrl_blog_.get_blog_path()));
-
-    logger_.info("Nouveau blog créé avec succès");
     delete wiz;
 }
 
-void MainWindow::on_actionOpen_triggered()
+void MainWindow::open(std::string path)
 {
     logger_.info("Chargement d'une instance existante de blog");
 
+    try {
+        ctrl_blog_.open_blog(path);
+    }
+    catch (const std::exception& e) {
+        warning(std::string("Impossible d'ouvrir le blog !\n") + std::string(e.what()));
+        return;
+    }
+
+    // Add to history if does not exist already
+    QString qpath = QString::fromStdString(path);
+    if(blog_history_.indexOf(qpath) < 0) {
+        blog_history_ << qpath;
+    }
+
+    //emit post_list_changed(ctrl_blog_.post_list());
+    emit blog_changed(QString::fromStdString(ctrl_blog_.get_blog_path()));
+    status("Blog chargé !");
+}
+
+
+void MainWindow::on_actionOpen_triggered()
+{
     // Asking for the new blog path
     QString q_blog_folder_path = QFileDialog::getExistingDirectory(
         this,
@@ -144,22 +157,7 @@ void MainWindow::on_actionOpen_triggered()
         return;
     }
 
-    try {
-        ctrl_blog_.open_blog(blog_folder_path);
-    }
-    catch (const std::exception& e) {
-        warning(std::string("Impossible d'ouvrir le blog !\n") + std::string(e.what()));
-        return;
-    }
-
-    // Add to history if does not exist already
-    if(blog_history_.indexOf(q_blog_folder_path) < 0) {
-        blog_history_ << q_blog_folder_path;
-    }
-
-    //emit post_list_changed(ctrl_blog_.post_list());
-    emit blog_changed(QString::fromStdString(ctrl_blog_.get_blog_path()));
-    status("Blog chargé !");
+    open(blog_folder_path);
 }
 
 void MainWindow::on_addPostButton_clicked()
