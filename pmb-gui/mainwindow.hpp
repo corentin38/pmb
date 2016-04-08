@@ -72,6 +72,11 @@ private:
     void create(std::string, std::string, bool, bool);
     void open(std::string);
 
+    // Constants
+    const QString BLOG = "last_blog";
+    const QString AUTHOR = "last_author";
+
+
 };
 
 #endif // MAINWINDOW_HPP

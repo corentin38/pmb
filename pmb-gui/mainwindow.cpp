@@ -33,7 +33,7 @@ MainWindow::MainWindow(basics::Simple_logger logger, QWidget *parent) :
     logger_.info("Démarrage de l'application Pimp My Blog");
     logger_.info("Version : EN COURS DE DEVELOPPEMENT");
 
-    std::string last_blog(cfg_.value("last_blog", "").toString().toStdString());
+    std::string last_blog(cfg_.value(BLOG, "").toString().toStdString());
     if (!last_blog.empty()) {
         open(last_blog);
     }
@@ -126,8 +126,8 @@ void MainWindow::open(std::string path)
     try {
         ctrl_blog_.open_blog(path);
     }
-    catch (const std::exception& e) {
-        warning(std::string("Impossible d'ouvrir le blog !\n") + std::string(e.what()));
+    catch (const std::runtime_error *e) {
+        warning(std::string("Impossible d'ouvrir le blog !\n") + std::string(e->what()));
         return;
     }
 
@@ -164,7 +164,9 @@ void MainWindow::on_addPostButton_clicked()
 {
     if (!ctrl_blog_.has_blog()) return;
 
-    PostEditor *editor = new PostEditor(this);
+    QString last_author = cfg_.value(AUTHOR, "").toString();
+
+    PostEditor *editor = new PostEditor(this, last_author);
     int code = editor->exec();
     if (code == QDialog::Rejected) {
         delete editor;
@@ -184,6 +186,8 @@ void MainWindow::on_addPostButton_clicked()
         delete editor;
         return;
     }
+
+    cfg_.setValue(AUTHOR, QString::fromStdString(author));
 
     logger_.info("Nouveau post créé avec succès");
     delete editor;
@@ -310,7 +314,7 @@ void MainWindow::status(std::string status, int seconds)
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     if (ctrl_blog_.has_blog()) {
-        cfg_.setValue("last_blog", QString::fromStdString(ctrl_blog_.get_blog_path()));
+        cfg_.setValue(BLOG, QString::fromStdString(ctrl_blog_.get_blog_path()));
     }
 
     event->accept();
