@@ -1,19 +1,19 @@
 /**
  * This file is part of PMB.
- * 
+ *
  * PMB is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * PMB is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with PMB.  If not, see <http://www.gnu.org/licenses/>. 
- */ 
+ * along with PMB.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * @author Corentin MARCIAU	<corentin@marciau.fr>
@@ -34,7 +34,7 @@ basics::Generator::Generator() : buff_(), f_ptr_(NULL)
 {
 }
 
-void basics::Generator::templatize_the_fucker(bfs::path template_path, 
+void basics::Generator::templatize_the_fucker(bfs::path template_path,
                                               bfs::path destination_path,
                                               basics::Persistable_blog blog)
 {
@@ -44,7 +44,7 @@ void basics::Generator::templatize_the_fucker(bfs::path template_path,
     std::vector<basics::Post> posts = blog.posts();
 
     std::sort(posts.begin(), posts.end());
-    
+
     int post_per_page = config.post_per_page_;
     int posts_number = posts.size();
 
@@ -56,7 +56,7 @@ void basics::Generator::templatize_the_fucker(bfs::path template_path,
         // Make the post subset
         std::vector<basics::Post>::iterator beg = posts.begin() + page_count * post_per_page;
         std::vector<basics::Post>::iterator end;
-        
+
         if (page_count * post_per_page + post_per_page >= posts_number) {
             end = posts.end();
             has_next = false;
@@ -89,16 +89,16 @@ void basics::Generator::templatize_the_fucker(bfs::path template_path,
                 next << "#";
             }
         }
-        
+
         std::vector<basics::Post> page(beg, end);
         templatize_page(template_path, destination_path, page_name.str(), config, page, next.str(), prev.str());
-        
+
         page_count++;
     }
-    
+
 }
 
-void basics::Generator::templatize_page(bfs::path tpl, bfs::path destination_path, std::string pagename, basics::Configuration_blog &config, std::vector<basics::Post> &posts, std::string prev_page_link, std::string next_page_link) 
+void basics::Generator::templatize_page(bfs::path tpl, bfs::path destination_path, std::string pagename, basics::Configuration_blog &config, std::vector<basics::Post> &posts, std::string prev_page_link, std::string next_page_link)
 {
     init(tpl);
 
@@ -115,10 +115,17 @@ void basics::Generator::templatize_page(bfs::path tpl, bfs::path destination_pat
         set_variable("nav-item", it->second);
         feed_table("nav-items");
     }
-    
+
+    // Find home link and set icon
+    for (std::map<std::string, std::string>::iterator it = menu.begin(); it != menu.end(); ++it) {
+        if (it->second.compare(config.home_link_) == 0) {
+            set_variable("nav-select", " active");
+        }
+    }
+
     set_variable("title", config.title_);
     set_variable("subtitle", config.subtitle_);
-    
+
     // Posts
     for (std::vector<basics::Post>::iterator it = posts.begin(); it != posts.end(); ++it) {
         set_variable("post-title", it->get_title());
@@ -128,11 +135,11 @@ void basics::Generator::templatize_page(bfs::path tpl, bfs::path destination_pat
 
         markdown::Document doc;
         doc.read(it->get_life());
-        
+
         std::stringstream output;
         doc.write(output);
-        
-        
+
+
         set_variable("post-life", output.str());
         feed_table("posts");
     }
@@ -144,7 +151,7 @@ void basics::Generator::templatize_page(bfs::path tpl, bfs::path destination_pat
     set_variable("about-line", config.about_headline_);
     set_variable("links-line", config.links_headline_);
 
-    
+
     std::map<std::string, std::string> links = config.links_;
     for (std::map<std::string, std::string>::iterator it = links.begin(); it != links.end(); ++it) {
         set_variable("link-href", it->first);
@@ -155,13 +162,13 @@ void basics::Generator::templatize_page(bfs::path tpl, bfs::path destination_pat
     set_variable("philosophy", config.philosophy_);
     set_variable("backtotop", config.back_to_top_);
 
-    exec(destination_path, pagename);    
-    clear();    
+    exec(destination_path, pagename);
+    clear();
     destroy();
 }
 
 
-void basics::Generator::init(bfs::path template_path) 
+void basics::Generator::init(bfs::path template_path)
 {
     f_ptr_ = NULL;
     flateSetFile(&f_ptr_, fu(template_path.string()));
@@ -172,12 +179,12 @@ void basics::Generator::set_variable(std::string name, std::string value)
     flateSetVar(f_ptr_, fu(name), fu(value));
 }
 
-void basics::Generator::feed_table(std::string name) 
+void basics::Generator::feed_table(std::string name)
 {
     flateDumpTableLine(f_ptr_, fu(name));
 }
 
-void basics::Generator::exec(bfs::path folder, std::string name) 
+void basics::Generator::exec(bfs::path folder, std::string name)
 {
     bfs::path res = folder / bfs::path(name);
     std::string content(flatePage(f_ptr_));
@@ -186,9 +193,9 @@ void basics::Generator::exec(bfs::path folder, std::string name)
     page.close();
 }
 
-    
 
-char* basics::Generator::fu(std::string in) 
+
+char* basics::Generator::fu(std::string in)
 {
     char* another = new char [in.size() + 1];
     strcpy(another, in.c_str());
@@ -196,7 +203,7 @@ char* basics::Generator::fu(std::string in)
     return another;
 }
 
-void basics::Generator::clear() 
+void basics::Generator::clear()
 {
     for (std::vector<char*>::iterator it = buff_.begin(); it != buff_.end(); ++it) {
         delete[] *it;
@@ -204,8 +211,7 @@ void basics::Generator::clear()
     buff_.clear();
 }
 
-void basics::Generator::destroy() 
+void basics::Generator::destroy()
 {
     flateFreeMem(f_ptr_);
 }
-

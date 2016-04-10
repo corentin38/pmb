@@ -3,26 +3,27 @@
   <config>
     <meta-desc>Ceci est la description de ce blog pour les moteurs de recherche</meta-desc>
     <meta-author>Vous</meta-author>
-    
+
     <meta-title>Titre du blog</meta-title>
     <meta-conf-bootstrap>resources/dist/css/bootstrap.min.css</meta-conf-bootstrap>
     <meta-conf-css>resources/blog.css</meta-conf-css>
-    
+
     <nav-items>
       <!-- Placer à la place du # le lien vers la page "à propos" -->
       <item href="#">À propos</item>
     </nav-items>
-    
+    <home-link>À propos</home-link>
+
     <title>Titre du blog</title>
     <subtitle>Sous-titre du blog</subtitle>
-    
+
     <about line="À propos latéral ?">Placez ici la description de votre blog qui aparaitra dans le menu latéral</about>
-    
+
     <links line="Liens">
       <item href="http://www.google.fr/">Moteur de recherche Google</item>
       <item href="https://duckduckgo.com/">Moteur de recherche DuckDuckGo</item>
     </links>
-    
+
     <philosophy>Placez ici le footer du blog. Supportez Bootstrap !<a href="http://getbootstrap.com">Boot me !</a></philosophy>
     <backtotop>Back to top</backtotop>
     <post-per-page>10</post-per-page>

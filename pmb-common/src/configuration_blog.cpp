@@ -1,19 +1,19 @@
 /**
  * This file is part of PMB.
- * 
+ *
  * PMB is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * PMB is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with PMB.  If not, see <http://www.gnu.org/licenses/>. 
- */ 
+ * along with PMB.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * @author Corentin MARCIAU	<corentin@marciau.fr>
@@ -31,6 +31,7 @@ basics::Configuration_blog::Configuration_blog(std::string meta_desc,
                                                std::string bootstrap,
                                                std::string css,
                                                std::map<std::string, std::string> menu,
+                                               std::string home_link,
                                                std::string title,
                                                std::string subtitle,
                                                std::string about,
@@ -46,6 +47,7 @@ basics::Configuration_blog::Configuration_blog(std::string meta_desc,
     bootstrap_(bootstrap),
     css_(css),
     menu_(menu),
+    home_link_(home_link),
     title_(title),
     subtitle_(subtitle),
     about_(about),
@@ -54,6 +56,6 @@ basics::Configuration_blog::Configuration_blog(std::string meta_desc,
     links_headline_(links_headline),
     philosophy_(philosophy),
     back_to_top_(back_to_top),
-    post_per_page_(post_per_page) 
+    post_per_page_(post_per_page)
 {
 }
