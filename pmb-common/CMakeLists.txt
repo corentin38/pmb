@@ -44,6 +44,7 @@ add_library( ${PROJECT_NAME} SHARED
   src/persistable_blog.cpp
   src/generator.cpp
   src/configuration_blog.cpp
+  src/ssh_moulinator.cpp
 )
 
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-fPIC")

@@ -1,19 +1,19 @@
 /**
  * This file is part of PMB.
- * 
+ *
  * PMB is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * PMB is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with PMB.  If not, see <http://www.gnu.org/licenses/>. 
- */ 
+ * along with PMB.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * @author Corentin MARCIAU	<corentin@marciau.fr>
@@ -28,10 +28,11 @@
 #include <blog/generator.hpp>
 #include <blog/factory_blog.hpp>
 #include <blog/persistable_blog.hpp>
+#include <blog/ssh_moulinator.hpp>
 #include <iostream>
 #include <stdexcept>
 
-basics::Controller_blog::Controller_blog(basics::Simple_logger logger) 
+basics::Controller_blog::Controller_blog(basics::Simple_logger logger)
     : logger_(logger), current_blog_(), persistor_()
 {
 }
@@ -46,7 +47,7 @@ bool basics::Controller_blog::has_blog() const
         return false;
     }
 }
-    
+
 std::string basics::Controller_blog::create_blog(std::string &blog_name, std::string &blog_parent_path, bool override, bool sample)
 {
     bfs::path blog_parent_folder(blog_parent_path);
@@ -61,14 +62,14 @@ std::string basics::Controller_blog::create_blog(std::string &blog_name, std::st
 
     return current_blog_->get_blog_path();
 }
-    
+
 std::string basics::Controller_blog::open_blog(std::string &blog_folder_path)
 {
     bfs::path blog_folder(blog_folder_path);
 
     if (!bfs::exists(blog_folder) || !bfs::is_directory(blog_folder)) {
         throw new std::runtime_error("Invalid blog folder");
-    }    
+    }
 
     if (has_current_blog() && blog_folder == current_blog_->get_blog_folder()) {
         // Blog already loaded
@@ -80,7 +81,7 @@ std::string basics::Controller_blog::open_blog(std::string &blog_folder_path)
 
     logger_.info(std::string("Instance chargée : ") + blog_folder_path);
     return blog_folder.string();
-}    
+}
 
 void basics::Controller_blog::generate_blog()
 {
@@ -91,12 +92,12 @@ void basics::Controller_blog::generate_blog()
     logger_.info("Début de la génération du blog");
     basics::Generator gen;
     basics::Persistable_blog blog(current_blog_->get_posts(),
-                                  current_blog_->get_config());    
+                                  current_blog_->get_config());
 
     gen.templatize_the_fucker(current_blog_->get_template_file(),
                               current_blog_->get_blog_folder(),
                               blog);
-    
+
     logger_.info("Blog généré");
 }
 
@@ -107,7 +108,7 @@ std::vector<std::string> basics::Controller_blog::post_id_list()
         std::vector<std::string> empty;
         return empty;
     }
-    
+
     return current_blog_->get_post_ids();
 }
 
@@ -117,7 +118,7 @@ std::vector<basics::Post> basics::Controller_blog::post_list()
         std::vector<basics::Post> empty;
         return empty;
     }
-    
+
     return current_blog_->get_posts();
 }
 
@@ -128,14 +129,14 @@ basics::Post basics::Controller_blog::post(std::string& timestamp_str)
     return current_blog_->get_post(timestamp_str);
 }
 
-basics::Post basics::Controller_blog::add_post(std::string& title, 
-                                              std::string& author, 
+basics::Post basics::Controller_blog::add_post(std::string& title,
+                                              std::string& author,
                                               std::string& life)
 {
     if (!has_blog()) {
         throw new std::runtime_error("No blog currently selected");
     }
-    
+
     basics::Post post = current_blog_->add_post(title, author, life);
     persist_current_blog();
     return post;
@@ -149,7 +150,7 @@ basics::Post basics::Controller_blog::edit_post(std::string& timestamp_str,
     if (!has_blog()) {
         throw new std::runtime_error("No blog currently selected");
     }
-    
+
     basics::Post post = current_blog_->edit_post(timestamp_str, title, author, life);
     persist_current_blog();
     return post;
@@ -161,8 +162,36 @@ void basics::Controller_blog::remove_post(std::string& timestamp_str)
     persist_current_blog();
 }
 
+// SSH ------------------------------------------------------
+void basics::Controller_blog::submit_to_server(std::string& remote_address)
+{
+    if (!has_current_blog()) {
+        return;
+    }
+
+    logger_.info("To the server !");
+    basics::Ssh_moulinator ssh;
+    basics::Persistable_blog blog(current_blog_->get_posts(),
+                                  current_blog_->get_config());
+
+    if (!ssh.is_synchronized(blog, remote_address)) {
+        throw new std::runtime_error("Blog is not up to date");
+    }
+
+    ssh.submit(blog, remote_address);
+}
+
+void basics::Controller_blog::update_from_server(std::string& remote_address)
+{
+    if (!has_current_blog()) {
+        return;
+    }
+
+}
+
+
 // Private --------------------------------------------------
-void basics::Controller_blog::persist_current_blog() 
+void basics::Controller_blog::persist_current_blog()
 {
     if (!has_current_blog()) {
         return;
@@ -190,10 +219,10 @@ std::string basics::Controller_blog::get_post_content(std::string &timestamp)
     return life;
 }
 
-std::string 
+std::string
 basics::Controller_blog::add_post_to_current_blog(
-    std::string& title, 
-    std::string& author, 
+    std::string& title,
+    std::string& author,
     std::string& life)
 {
     add_post(title, author, life);
@@ -214,4 +243,3 @@ std::vector<std::string> basics::Controller_blog::get_post_id_list()
 {
     return post_id_list();
 }
-
