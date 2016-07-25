@@ -26,7 +26,7 @@
 #ifndef SSH_MOULINATOR_HPP
 #define SSH_MOULINATOR_HPP
 
-#include <blog/persistable_blog.hpp>
+#include <iostream>
 
 namespace basics {
 
@@ -35,8 +35,8 @@ class Ssh_moulinator {
 public:
    Ssh_moulinator();
 
-   bool is_synchronized(basics::Persistable_blog&, std::string&);
-   void submit(basics::Persistable_blog&, std::string&);
+   bool is_synchronized(std::string&, std::string&, std::string&);
+   void submit(std::string&, std::string&, std::string&);
 
 };
 

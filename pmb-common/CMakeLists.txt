@@ -12,10 +12,17 @@ set( CONTENT_SAMPLE_RESOURCE ${RESOURCES}/content_sample.xml )
 set( CONTENT_EMPTY_RESOURCE ${RESOURCES}/content_empty.xml )
 set( BOOTSTRAP_RESOURCE ${RESOURCES}/dist )
 set( CSS_RESOURCE ${RESOURCES}/blog.css )
+set( SYNC_SCRIPT ${RESOURCES}/sync.sh )
+set( SUBMIT_SCRIPT ${RESOURCES}/submit.sh )
 
 configure_file(
   ${CMAKE_SOURCE_DIR}/include/gen/blog_constants.hpp.in
   ${CMAKE_SOURCE_DIR}/include/gen/blog_constants.hpp
+)
+
+configure_file(
+  ${CMAKE_SOURCE_DIR}/include/gen/script_constants.hpp.in
+  ${CMAKE_SOURCE_DIR}/include/gen/script_constants.hpp
 )
 ##################################################################
 
@@ -66,6 +73,8 @@ install(FILES
   resources/content_sample.xml
   resources/content_empty.xml
   resources/blog.css
+  resources/sync.sh
+  resources/submit.sh
 
   DESTINATION
   share/pmb

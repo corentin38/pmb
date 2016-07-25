@@ -17,7 +17,7 @@ find_package( Qt5 REQUIRED Widgets )
 find_package( Boost COMPONENTS thread system filesystem log log_setup date_time regex REQUIRED )
 find_library( LIBPMB_COMMON libpmb-common.so PATHS ${PMB_COMMON} )
 
-qt5_wrap_ui( QT_UI_FILES mainwindow.ui blogwizard.ui posteditor.ui )
+qt5_wrap_ui( QT_UI_FILES mainwindow.ui blogwizard.ui posteditor.ui sshdialog.ui )
 
 include_directories(
   ${PMB_COMMON}/include
@@ -31,6 +31,7 @@ add_executable(
   posteditor.cpp
   mainwindow.cpp
   wpostlist.cpp
+  sshdialog.cpp
   ${QT_UI_FILES}
   ${QT_RCC_FILES}
 )

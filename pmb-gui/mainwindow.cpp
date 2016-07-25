@@ -1,6 +1,7 @@
 #include "mainwindow.hpp"
 #include "blogwizard.hpp"
 #include "posteditor.hpp"
+#include "sshdialog.hpp"
 #include <ui_mainwindow.h>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -67,6 +68,37 @@ void MainWindow::gen()
 void MainWindow::on_actionGenerate_triggered()
 {
     gen();
+}
+
+void MainWindow::on_actionPublish_triggered()
+{
+    SshDialog *dlg = new SshDialog(this);
+    int code = dlg->exec();
+    if (code == QDialog::Rejected) {
+        delete dlg;
+        return;
+    }
+
+    std::string host = dlg->get_host();
+    std::string host_path = dlg->get_host_path();
+
+    if (host.empty()) {
+        warning("Aucun hostname n'a été fourni !\n"
+                "Abandon de la publication du blog.");
+        delete dlg;
+        return;
+    }
+
+    if (host_path.empty()) {
+        warning("Aucun hostname n'a été fourni !\n"
+                "Abandon de la publication du blog.");
+        delete dlg;
+        return;
+    }
+
+    ctrl_blog_.submit_to_server(host, host_path);
+
+    delete dlg;
 }
 
 void MainWindow::create(std::string name, std::string path, bool over, bool sample)

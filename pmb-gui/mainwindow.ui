@@ -177,7 +177,7 @@
      <x>0</x>
      <y>0</y>
      <width>760</width>
-     <height>19</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -213,6 +213,7 @@
    <addaction name="actionOpen"/>
    <addaction name="actionSave"/>
    <addaction name="actionGenerate"/>
+   <addaction name="actionPublish"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionQuit">
@@ -254,6 +255,14 @@
   <action name="actionSave">
    <property name="text">
     <string>enregistrer</string>
+   </property>
+  </action>
+  <action name="actionPublish">
+   <property name="text">
+    <string>publier</string>
+   </property>
+   <property name="toolTip">
+    <string>Publier</string>
    </property>
   </action>
  </widget>

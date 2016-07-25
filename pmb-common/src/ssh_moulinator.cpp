@@ -23,19 +23,34 @@
  * @file ssh_moulinator.cpp
  */
 
-#include "blog/ssh_moulinator.hpp"
+#include <blog/ssh_moulinator.hpp>
+#include <gen/script_constants.hpp>
 
 #include <iostream>
+#include <stdexcept>
 
 basics::Ssh_moulinator::Ssh_moulinator()
 {
    std::cout << "Passage dans le constructeur de Ssh_moulinator !\n";
 }
 
-bool basics::Ssh_moulinator::is_synchronized(basics::Persistable_blog& blog, std::string& address)
+bool basics::Ssh_moulinator::is_synchronized(std::string& address, std::string& remote_path, std::string& local_path)
 {
+   std::string cmd = getSyncScript() + " " + address + " " + remote_path + " " + local_path;
+   int ret = system(cmd.c_str());
+
+   if (ret == 0) return true;
+   if (ret == 1) return false;
+
+   throw new std::runtime_error("Unknown error from the sync script, see logs");
 }
 
-void basics::Ssh_moulinator::submit(basics::Persistable_blog& blog, std::string& address)
+void basics::Ssh_moulinator::submit(std::string& address, std::string& remote_path, std::string& local_path)
 {
+   std::string cmd = getSubmitScript() + " " + address + " " + remote_path + " " + local_path;
+   int ret = system(cmd.c_str());
+
+   if (ret != 0) {
+      throw new std::runtime_error("Unknown error from the sync script, see logs");
+   }
 }

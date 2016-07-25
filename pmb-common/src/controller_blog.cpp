@@ -163,7 +163,7 @@ void basics::Controller_blog::remove_post(std::string& timestamp_str)
 }
 
 // SSH ------------------------------------------------------
-void basics::Controller_blog::submit_to_server(std::string& remote_address)
+void basics::Controller_blog::submit_to_server(std::string& remote_address, std::string& remote_blog_path)
 {
     if (!has_current_blog()) {
         return;
@@ -171,24 +171,23 @@ void basics::Controller_blog::submit_to_server(std::string& remote_address)
 
     logger_.info("To the server !");
     basics::Ssh_moulinator ssh;
-    basics::Persistable_blog blog(current_blog_->get_posts(),
-                                  current_blog_->get_config());
 
-    if (!ssh.is_synchronized(blog, remote_address)) {
-        throw new std::runtime_error("Blog is not up to date");
-    }
-
-    ssh.submit(blog, remote_address);
+    std::string bp = blog_path();
+    ssh.submit(remote_address, remote_blog_path, bp);
 }
 
-void basics::Controller_blog::update_from_server(std::string& remote_address)
+bool basics::Controller_blog::check_if_synchronized(std::string& remote_address, std::string& remote_blog_path)
 {
     if (!has_current_blog()) {
-        return;
+        return false;
     }
 
-}
+    logger_.info("Let's get a look at the server...");
+    basics::Ssh_moulinator ssh;
 
+    std::string bp = blog_path();
+    return ssh.is_synchronized(remote_address, remote_blog_path, bp);
+}
 
 // Private --------------------------------------------------
 void basics::Controller_blog::persist_current_blog()

@@ -38,6 +38,7 @@ private slots:
     void on_actionGenerate_triggered();
     void on_actionNew_triggered();
     void on_actionOpen_triggered();
+    void on_actionPublish_triggered();
 
     void on_blogCB_currentIndexChanged(const QString&);
 
@@ -75,6 +76,8 @@ private:
     // Constants
     const QString BLOG = "last_blog";
     const QString AUTHOR = "last_author";
+    const QString SERVER = "remote_host";
+    const QString BLOG_PATH_ON_SERVER = "remote_blog_path";
 
 
 };

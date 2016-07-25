@@ -71,8 +71,8 @@ public:
     void remove_post(std::string&);
 
     // SSH
-    void submit_to_server(std::string&);
-    void update_from_server(std::string&);
+    void submit_to_server(std::string&, std::string&);
+    bool check_if_synchronized(std::string&, std::string&);
 
     // Deprecated
     std::string create_new_blog(std::string&, std::string&, bool, bool);
