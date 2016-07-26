@@ -56,6 +56,9 @@ add_library( ${PROJECT_NAME} SHARED
 
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-fPIC")
 
+# YOU NEED TO BUILD LIBFLATE IN pmb-common/libs/flate BEFORE BUILD
+#   $ cd pmb-common/libs/flate
+#   $ make
 find_library( FLATE libflate.a PATHS ${CMAKE_SOURCE_DIR}/lib/flate )
 target_link_libraries( ${PROJECT_NAME}
   utils
@@ -73,6 +76,11 @@ install(FILES
   resources/content_sample.xml
   resources/content_empty.xml
   resources/blog.css
+
+  DESTINATION
+  share/pmb
+)
+install(PROGRAMS
   resources/sync.sh
   resources/submit.sh
 
